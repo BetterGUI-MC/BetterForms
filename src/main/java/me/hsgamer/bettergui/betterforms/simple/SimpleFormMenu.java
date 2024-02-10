@@ -21,7 +21,7 @@ import java.util.function.BiConsumer;
 public class SimpleFormMenu extends StandardMenu {
     private final String title;
     private final String content;
-    private final Map<String, ButtonComponent> buttonComponentMap = new LinkedHashMap<>();
+    private final Map<String, SimpleButtonComponent> buttonComponentMap = new LinkedHashMap<>();
     private final List<BiConsumer<UUID, SimpleForm.Builder>> formModifiers = new ArrayList<>();
 
     public SimpleFormMenu(Config config) {
@@ -62,7 +62,7 @@ public class SimpleFormMenu extends StandardMenu {
             Map<String, Object> value = MapUtils.castOptionalStringObjectMap(configEntry.getValue())
                     .<Map<String, Object>>map(CaseInsensitiveStringMap::new)
                     .orElseGet(Collections::emptyMap);
-            buttonComponentMap.put(key, new ButtonComponent(this, key, index++, value));
+            buttonComponentMap.put(key, new SimpleButtonComponent(this, key, index++, value));
         }
     }
 

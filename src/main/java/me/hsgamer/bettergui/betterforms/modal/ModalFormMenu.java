@@ -21,7 +21,7 @@ import java.util.function.BiConsumer;
 public class ModalFormMenu extends StandardMenu {
     private final String title;
     private final String content;
-    private final Map<String, ButtonComponent> buttonComponentMap = new LinkedHashMap<>();
+    private final Map<String, ModalButtonComponent> buttonComponentMap = new LinkedHashMap<>();
     private final List<BiConsumer<UUID, ModalForm.Builder>> formModifiers = new ArrayList<>();
 
     public ModalFormMenu(Config config) {
@@ -61,7 +61,7 @@ public class ModalFormMenu extends StandardMenu {
             Map<String, Object> value = MapUtils.castOptionalStringObjectMap(configEntry.getValue())
                     .<Map<String, Object>>map(CaseInsensitiveStringMap::new)
                     .orElseGet(Collections::emptyMap);
-            buttonComponentMap.put(key, new ButtonComponent(this, key, value));
+            buttonComponentMap.put(key, new ModalButtonComponent(this, key, value));
         }
     }
 
