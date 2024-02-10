@@ -35,7 +35,7 @@ public class ModalButtonComponent extends CommonButtonComponent {
 
     public void handle(UUID uuid, ModalFormResponse response) {
         if (first == response.clickedFirst()) {
-            handleClick(uuid);
+            handle(uuid);
         }
     }
 }

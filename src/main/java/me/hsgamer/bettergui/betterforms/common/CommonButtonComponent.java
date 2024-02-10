@@ -20,20 +20,24 @@ public class CommonButtonComponent implements MenuElement {
     private final ActionApplier actionApplier;
     private final RequirementApplier requirementApplier;
 
-    public CommonButtonComponent(Menu menu, String name, Map<String, Object> options) {
+    public CommonButtonComponent(Menu menu, String name, Object actionValue, Map<String, Object> requirementMap) {
         this.menu = menu;
-
-        actionApplier = Optional.ofNullable(MapUtils.getIfFound(options, "action", "command"))
-                .map(o -> new ActionApplier(menu, o))
-                .orElseGet(() -> new ActionApplier(Collections.emptyList()));
-
-        Map<String, Object> requirementMap = Optional.ofNullable(MapUtils.getIfFound(options, "requirement", "click-requirement"))
-                .flatMap(MapUtils::castOptionalStringObjectMap)
-                .orElse(Collections.emptyMap());
+        actionApplier = new ActionApplier(menu, actionValue);
         requirementApplier = new RequirementApplier(menu, name, requirementMap);
     }
 
-    protected void handleClick(UUID uuid) {
+    public CommonButtonComponent(Menu menu, String name, Map<String, Object> options) {
+        this(
+                menu,
+                name,
+                Optional.ofNullable(MapUtils.getIfFound(options, "action", "command")).orElse(Collections.emptyList()),
+                Optional.ofNullable(MapUtils.getIfFound(options, "requirement", "click-requirement"))
+                        .flatMap(MapUtils::castOptionalStringObjectMap)
+                        .orElse(Collections.emptyMap())
+        );
+    }
+
+    public void handle(UUID uuid) {
         BatchRunnable batchRunnable = new BatchRunnable();
         batchRunnable.getTaskPool(ProcessApplierConstants.REQUIREMENT_ACTION_STAGE)
                 .addLast(process -> {

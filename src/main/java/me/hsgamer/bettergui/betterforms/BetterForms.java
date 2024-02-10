@@ -1,6 +1,7 @@
 package me.hsgamer.bettergui.betterforms;
 
 import me.hsgamer.bettergui.api.addon.GetLogger;
+import me.hsgamer.bettergui.betterforms.custom.CustomFormMenu;
 import me.hsgamer.bettergui.betterforms.modal.ModalFormMenu;
 import me.hsgamer.bettergui.betterforms.sender.FloodgateFormSender;
 import me.hsgamer.bettergui.betterforms.sender.FormSender;
@@ -40,5 +41,6 @@ public final class BetterForms implements Expansion, GetLogger {
 
         MenuBuilder.INSTANCE.register(config -> new ModalFormMenu(sender, config), "modal-form");
         MenuBuilder.INSTANCE.register(config -> new SimpleFormMenu(sender, config), "simple-form");
+        MenuBuilder.INSTANCE.register(config -> new CustomFormMenu(sender, config), "custom-form");
     }
 }
