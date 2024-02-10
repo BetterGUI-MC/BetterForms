@@ -5,7 +5,6 @@ import me.hsgamer.bettergui.betterforms.form.FormSender;
 import me.hsgamer.hscore.config.Config;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.form.util.FormBuilder;
-import org.geysermc.floodgate.api.FloodgateApi;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -23,16 +22,12 @@ public abstract class FormMenu<T extends FormBuilder<?, ?, ?>> extends StandardM
     @Override
     public boolean create(Player player, String[] args, boolean bypass) {
         UUID uuid = player.getUniqueId();
-        if (!FloodgateApi.getInstance().isFloodgatePlayer(uuid)) {
+        if (!sender.canSendForm(uuid)) {
             return false;
         }
 
         Optional<T> formBuilder = createFormBuilder(player, args, bypass);
-        if (formBuilder.isPresent()) {
-            sender.sendForm(uuid, formBuilder.get());
-            return true;
-        }
-        return false;
+        return formBuilder.filter(t -> sender.sendForm(uuid, t)).isPresent();
     }
 
     @Override
