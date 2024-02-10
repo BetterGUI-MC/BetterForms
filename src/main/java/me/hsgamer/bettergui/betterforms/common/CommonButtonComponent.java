@@ -37,7 +37,7 @@ public class CommonButtonComponent implements MenuElement {
         );
     }
 
-    public void handle(UUID uuid) {
+    public void handleClick(UUID uuid) {
         BatchRunnable batchRunnable = new BatchRunnable();
         batchRunnable.getTaskPool(ProcessApplierConstants.REQUIREMENT_ACTION_STAGE)
                 .addLast(process -> {

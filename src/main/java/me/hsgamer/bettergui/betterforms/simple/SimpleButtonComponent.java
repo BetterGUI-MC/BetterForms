@@ -44,7 +44,7 @@ public class SimpleButtonComponent extends CommonButtonComponent {
 
     public void handle(UUID uuid, SimpleFormResponse response) {
         if (response.clickedButtonId() == index) {
-            handle(uuid);
+            handleClick(uuid);
         }
     }
 }
