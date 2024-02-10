@@ -10,4 +10,6 @@ public interface CustomFormComponent extends MenuElement {
     void apply(UUID uuid, CustomForm.Builder builder);
 
     void handle(UUID uuid, CustomFormResponse response);
+
+    String getValue(UUID uuid);
 }
