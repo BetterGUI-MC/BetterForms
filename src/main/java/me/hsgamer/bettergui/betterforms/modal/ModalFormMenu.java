@@ -56,12 +56,14 @@ public class ModalFormMenu extends FormMenu<ModalForm.Builder> {
                     });
                 });
 
+        boolean first = true;
         for (Map.Entry<CaseInsensitivePathString, Object> configEntry : configSettings.entrySet()) {
             String key = PathString.toPath(configEntry.getKey().getPathString());
             Map<String, Object> value = MapUtils.castOptionalStringObjectMap(configEntry.getValue())
                     .<Map<String, Object>>map(CaseInsensitiveStringMap::new)
                     .orElseGet(Collections::emptyMap);
-            buttonComponentMap.put(key, new ModalButtonComponent(this, key, value));
+            buttonComponentMap.put(key, new ModalButtonComponent(this, key, first, value));
+            first = false;
         }
     }
 

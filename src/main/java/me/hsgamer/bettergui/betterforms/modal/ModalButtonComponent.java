@@ -15,16 +15,13 @@ public class ModalButtonComponent extends CommonButtonComponent {
     private final String value;
     private final boolean first;
 
-    public ModalButtonComponent(Menu menu, String name, Map<String, Object> options) {
+    public ModalButtonComponent(Menu menu, String name, boolean first, Map<String, Object> options) {
         super(menu, name, options);
+        this.first = first;
 
         value = Optional.ofNullable(MapUtils.getIfFound(options, "value", "text", "content"))
                 .map(Object::toString)
                 .orElse("");
-        first = Optional.ofNullable(MapUtils.getIfFound(options, "first", "first-button"))
-                .map(Object::toString)
-                .map(Boolean::parseBoolean)
-                .orElse(true);
     }
 
     public void apply(UUID uuid, ModalForm.Builder builder) {
