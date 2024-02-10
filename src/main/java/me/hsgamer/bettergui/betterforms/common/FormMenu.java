@@ -3,6 +3,7 @@ package me.hsgamer.bettergui.betterforms.common;
 import me.hsgamer.bettergui.api.menu.StandardMenu;
 import me.hsgamer.bettergui.argument.ArgumentHandler;
 import me.hsgamer.bettergui.betterforms.sender.FormSender;
+import me.hsgamer.bettergui.util.StringReplacerApplier;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.hscore.bukkit.utils.PermissionUtils;
 import me.hsgamer.hscore.common.CollectionUtils;
@@ -22,12 +23,17 @@ import static me.hsgamer.bettergui.BetterGUI.getInstance;
 
 public abstract class FormMenu<T extends FormBuilder<?, ?, ?>> extends StandardMenu {
     private final FormSender sender;
+    private final String title;
     private final List<Permission> permissions;
     private final ArgumentHandler argumentHandler;
 
     protected FormMenu(FormSender sender, Config config) {
         super(config);
         this.sender = sender;
+
+        title = Optional.ofNullable(MapUtils.getIfFound(menuSettings, "title"))
+                .map(Object::toString)
+                .orElse("");
 
         permissions = Optional.ofNullable(menuSettings.get("permission"))
                 .map(o -> CollectionUtils.createStringListFromObject(o, true))
@@ -73,7 +79,13 @@ public abstract class FormMenu<T extends FormBuilder<?, ?, ?>> extends StandardM
         }
 
         Optional<T> formBuilder = createFormBuilder(player, args, bypass);
-        return formBuilder.filter(t -> sender.sendForm(uuid, t)).isPresent();
+        if (!formBuilder.isPresent()) {
+            return false;
+        }
+
+        T builder = formBuilder.get();
+        builder.title(StringReplacerApplier.replace(title, uuid, this));
+        return sender.sendForm(uuid, builder);
     }
 
     @Override

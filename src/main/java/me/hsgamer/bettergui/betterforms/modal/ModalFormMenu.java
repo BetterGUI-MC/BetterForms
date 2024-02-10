@@ -19,7 +19,6 @@ import java.util.*;
 import java.util.function.BiConsumer;
 
 public class ModalFormMenu extends FormMenu<ModalForm.Builder> {
-    private final String title;
     private final String content;
     private final Map<String, ModalButtonComponent> buttonComponentMap = new LinkedHashMap<>();
     private final List<BiConsumer<UUID, ModalForm.Builder>> formModifiers = new ArrayList<>();
@@ -27,9 +26,6 @@ public class ModalFormMenu extends FormMenu<ModalForm.Builder> {
     public ModalFormMenu(FormSender sender, Config config) {
         super(sender, config);
 
-        title = Optional.ofNullable(MapUtils.getIfFound(menuSettings, "title"))
-                .map(Object::toString)
-                .orElse("");
         content = Optional.ofNullable(MapUtils.getIfFound(menuSettings, "content"))
                 .map(Object::toString)
                 .orElse("");
@@ -71,7 +67,6 @@ public class ModalFormMenu extends FormMenu<ModalForm.Builder> {
     protected Optional<ModalForm.Builder> createFormBuilder(Player player, String[] args, boolean bypass) {
         UUID uuid = player.getUniqueId();
         ModalForm.Builder builder = ModalForm.builder();
-        builder.title(StringReplacerApplier.replace(title, uuid, this));
         builder.content(StringReplacerApplier.replace(content, uuid, this));
         buttonComponentMap.values().forEach(component -> component.apply(uuid, builder));
         formModifiers.forEach(modifier -> modifier.accept(uuid, builder));

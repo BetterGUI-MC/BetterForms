@@ -19,7 +19,6 @@ import java.util.*;
 import java.util.function.BiConsumer;
 
 public class SimpleFormMenu extends FormMenu<SimpleForm.Builder> {
-    private final String title;
     private final String content;
     private final Map<String, SimpleButtonComponent> buttonComponentMap = new LinkedHashMap<>();
     private final List<BiConsumer<UUID, SimpleForm.Builder>> formModifiers = new ArrayList<>();
@@ -27,9 +26,6 @@ public class SimpleFormMenu extends FormMenu<SimpleForm.Builder> {
     public SimpleFormMenu(FormSender sender, Config config) {
         super(sender, config);
 
-        title = Optional.ofNullable(MapUtils.getIfFound(menuSettings, "title"))
-                .map(Object::toString)
-                .orElse("");
         content = Optional.ofNullable(MapUtils.getIfFound(menuSettings, "content"))
                 .map(Object::toString)
                 .orElse("");
@@ -70,7 +66,6 @@ public class SimpleFormMenu extends FormMenu<SimpleForm.Builder> {
     protected Optional<SimpleForm.Builder> createFormBuilder(Player player, String[] args, boolean bypass) {
         UUID uuid = player.getUniqueId();
         SimpleForm.Builder builder = SimpleForm.builder();
-        builder.title(StringReplacerApplier.replace(title, uuid, this));
         builder.content(StringReplacerApplier.replace(content, uuid, this));
         buttonComponentMap.values().forEach(component -> component.apply(uuid, builder));
         formModifiers.forEach(modifier -> modifier.accept(uuid, builder));
