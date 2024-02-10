@@ -9,7 +9,15 @@ import java.util.UUID;
 public interface CustomFormComponent extends MenuElement {
     void apply(UUID uuid, CustomForm.Builder builder);
 
-    void handle(UUID uuid, CustomFormResponse response);
+    default void handle(UUID uuid, CustomFormResponse response) {
+        // EMPTY
+    }
 
-    String getValue(UUID uuid);
+    default void execute(UUID uuid, CustomFormResponse response) {
+        // EMPTY
+    }
+
+    default String getValue(UUID uuid) {
+        return "";
+    }
 }
