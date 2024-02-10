@@ -30,10 +30,10 @@ public final class BetterForms implements Expansion, GetLogger {
     @Override
     public void onEnable() {
         FormSender sender;
-        if (isGeyserInstalled) {
-            sender = new GeyserFormSender();
-        } else if (isFloodgateInstalled) {
+        if (isFloodgateInstalled) {
             sender = new FloodgateFormSender();
+        } else if (isGeyserInstalled) {
+            sender = new GeyserFormSender();
         } else {
             throw new IllegalStateException("Neither Geyser nor Floodgate is installed");
         }
