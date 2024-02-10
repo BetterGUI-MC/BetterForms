@@ -12,6 +12,7 @@ import me.hsgamer.hscore.common.MapUtils;
 import me.hsgamer.hscore.task.BatchRunnable;
 import org.geysermc.cumulus.form.SimpleForm;
 import org.geysermc.cumulus.response.SimpleFormResponse;
+import org.geysermc.cumulus.util.FormImage;
 
 import java.util.Collections;
 import java.util.Map;
@@ -24,6 +25,7 @@ public class ButtonComponent implements MenuElement {
     private final String value;
     private final ActionApplier actionApplier;
     private final RequirementApplier requirementApplier;
+    private final FormImage image;
 
     public ButtonComponent(Menu menu, String name, int index, Map<String, Object> options) {
         this.menu = menu;
@@ -40,11 +42,22 @@ public class ButtonComponent implements MenuElement {
                 .flatMap(MapUtils::castOptionalStringObjectMap)
                 .orElse(Collections.emptyMap());
         requirementApplier = new RequirementApplier(menu, name, requirementMap);
+
+        FormImage image = null;
+        image = Optional.ofNullable(MapUtils.getIfFound(options, "path"))
+                .map(Object::toString)
+                .map(s -> FormImage.of(FormImage.Type.PATH, s))
+                .orElse(image);
+        image = Optional.ofNullable(MapUtils.getIfFound(options, "url"))
+                .map(Object::toString)
+                .map(s -> FormImage.of(FormImage.Type.URL, s))
+                .orElse(image);
+        this.image = image;
     }
 
     public void apply(UUID uuid, SimpleForm.Builder builder) {
         String replaced = StringReplacerApplier.replace(value, uuid, this);
-        builder.button(replaced);
+        builder.button(replaced, image);
     }
 
     public void handle(UUID uuid, SimpleFormResponse response) {
