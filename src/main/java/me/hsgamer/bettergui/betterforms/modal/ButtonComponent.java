@@ -1,9 +1,9 @@
-package me.hsgamer.bettergui.betterforms.modal.content;
+package me.hsgamer.bettergui.betterforms.modal;
 
 import me.hsgamer.bettergui.action.ActionApplier;
+import me.hsgamer.bettergui.api.menu.Menu;
+import me.hsgamer.bettergui.api.menu.MenuElement;
 import me.hsgamer.bettergui.api.requirement.Requirement;
-import me.hsgamer.bettergui.betterforms.modal.ModalFormComponent;
-import me.hsgamer.bettergui.betterforms.modal.ModalFormComponentBuilder;
 import me.hsgamer.bettergui.requirement.RequirementApplier;
 import me.hsgamer.bettergui.util.ProcessApplierConstants;
 import me.hsgamer.bettergui.util.StringReplacerApplier;
@@ -18,32 +18,33 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-public class ButtonComponent extends ModalFormComponent {
+public class ButtonComponent implements MenuElement {
+    private final Menu menu;
     private final String value;
     private final boolean first;
     private final ActionApplier actionApplier;
     private final RequirementApplier requirementApplier;
 
-    public ButtonComponent(ModalFormComponentBuilder.Input input) {
-        super(input);
-        value = Optional.ofNullable(MapUtils.getIfFound(input.options, "value", "text", "content"))
+    public ButtonComponent(Menu menu, String name, Map<String, Object> options) {
+        this.menu = menu;
+
+        value = Optional.ofNullable(MapUtils.getIfFound(options, "value", "text", "content"))
                 .map(Object::toString)
                 .orElse("");
-        first = Optional.ofNullable(MapUtils.getIfFound(input.options, "first", "first-button"))
+        first = Optional.ofNullable(MapUtils.getIfFound(options, "first", "first-button"))
                 .map(Object::toString)
                 .map(Boolean::parseBoolean)
                 .orElse(true);
-        actionApplier = Optional.ofNullable(MapUtils.getIfFound(input.options, "action", "command"))
-                .map(o -> new ActionApplier(input.menu, o))
+        actionApplier = Optional.ofNullable(MapUtils.getIfFound(options, "action", "command"))
+                .map(o -> new ActionApplier(menu, o))
                 .orElseGet(() -> new ActionApplier(Collections.emptyList()));
 
-        Map<String, Object> requirementMap = Optional.ofNullable(MapUtils.getIfFound(input.options, "requirement", "click-requirement"))
+        Map<String, Object> requirementMap = Optional.ofNullable(MapUtils.getIfFound(options, "requirement", "click-requirement"))
                 .flatMap(MapUtils::castOptionalStringObjectMap)
                 .orElse(Collections.emptyMap());
-        requirementApplier = new RequirementApplier(input.menu, input.name, requirementMap);
+        requirementApplier = new RequirementApplier(menu, name, requirementMap);
     }
 
-    @Override
     public void apply(UUID uuid, ModalForm.Builder builder) {
         String replaced = StringReplacerApplier.replace(value, uuid, this);
         if (first) {
@@ -53,7 +54,6 @@ public class ButtonComponent extends ModalFormComponent {
         }
     }
 
-    @Override
     public void handle(UUID uuid, ModalFormResponse response) {
         if (first != response.clickedFirst()) return;
 
@@ -68,5 +68,10 @@ public class ButtonComponent extends ModalFormComponent {
                     process.next();
                 });
         Scheduler.current().async().runTask(batchRunnable);
+    }
+
+    @Override
+    public Menu getMenu() {
+        return menu;
     }
 }

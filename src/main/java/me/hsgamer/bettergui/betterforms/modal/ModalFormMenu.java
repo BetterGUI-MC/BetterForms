@@ -3,6 +3,7 @@ package me.hsgamer.bettergui.betterforms.modal;
 import me.hsgamer.bettergui.action.ActionApplier;
 import me.hsgamer.bettergui.api.menu.StandardMenu;
 import me.hsgamer.bettergui.util.ProcessApplierConstants;
+import me.hsgamer.bettergui.util.StringReplacerApplier;
 import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringMap;
 import me.hsgamer.hscore.common.MapUtils;
@@ -18,12 +19,20 @@ import java.util.*;
 import java.util.function.BiConsumer;
 
 public class ModalFormMenu extends StandardMenu {
-    private final Map<String, ModalFormComponent> components = new LinkedHashMap<>();
+    private final String title;
+    private final String content;
+    private final Map<String, ButtonComponent> buttonComponentMap = new LinkedHashMap<>();
     private final List<BiConsumer<UUID, ModalForm.Builder>> formModifiers = new ArrayList<>();
 
     public ModalFormMenu(Config config) {
         super(config);
 
+        title = Optional.ofNullable(MapUtils.getIfFound(menuSettings, "title"))
+                .map(Object::toString)
+                .orElse("");
+        content = Optional.ofNullable(MapUtils.getIfFound(menuSettings, "content"))
+                .map(Object::toString)
+                .orElse("");
         Optional.ofNullable(MapUtils.getIfFound(menuSettings, "close-action"))
                 .map(o -> new ActionApplier(this, o))
                 .ifPresent(closeAction -> {
@@ -52,9 +61,7 @@ public class ModalFormMenu extends StandardMenu {
             Map<String, Object> value = MapUtils.castOptionalStringObjectMap(configEntry.getValue())
                     .<Map<String, Object>>map(CaseInsensitiveStringMap::new)
                     .orElseGet(Collections::emptyMap);
-            ModalFormComponentBuilder.INSTANCE
-                    .build(new ModalFormComponentBuilder.Input(this, key, value))
-                    .ifPresent(component -> components.put(key, component));
+            buttonComponentMap.put(key, new ButtonComponent(this, key, value));
         }
     }
 
@@ -66,9 +73,11 @@ public class ModalFormMenu extends StandardMenu {
         }
 
         ModalForm.Builder builder = ModalForm.builder();
-        components.values().forEach(component -> component.apply(uuid, builder));
+        builder.title(StringReplacerApplier.replace(title, uuid, this));
+        builder.content(StringReplacerApplier.replace(content, uuid, this));
+        buttonComponentMap.values().forEach(component -> component.apply(uuid, builder));
         formModifiers.forEach(modifier -> modifier.accept(uuid, builder));
-        builder.validResultHandler(response -> components.values().forEach(component -> component.handle(uuid, response)));
+        builder.validResultHandler(response -> buttonComponentMap.values().forEach(component -> component.handle(uuid, response)));
 
         return FloodgateApi.getInstance().getPlayer(uuid).sendForm(builder);
     }
