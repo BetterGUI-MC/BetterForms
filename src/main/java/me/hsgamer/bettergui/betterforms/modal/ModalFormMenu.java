@@ -2,7 +2,7 @@ package me.hsgamer.bettergui.betterforms.modal;
 
 import me.hsgamer.bettergui.action.ActionApplier;
 import me.hsgamer.bettergui.betterforms.common.FormMenu;
-import me.hsgamer.bettergui.betterforms.form.FormSender;
+import me.hsgamer.bettergui.betterforms.sender.FormSender;
 import me.hsgamer.bettergui.util.ProcessApplierConstants;
 import me.hsgamer.bettergui.util.StringReplacerApplier;
 import me.hsgamer.hscore.bukkit.scheduler.Scheduler;

@@ -1,4 +1,4 @@
-package me.hsgamer.bettergui.betterforms.form;
+package me.hsgamer.bettergui.betterforms.sender;
 
 import org.geysermc.cumulus.form.util.FormBuilder;
 import org.geysermc.geyser.api.GeyserApi;

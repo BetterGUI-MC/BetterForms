@@ -1,7 +1,7 @@
 package me.hsgamer.bettergui.betterforms.common;
 
 import me.hsgamer.bettergui.api.menu.StandardMenu;
-import me.hsgamer.bettergui.betterforms.form.FormSender;
+import me.hsgamer.bettergui.betterforms.sender.FormSender;
 import me.hsgamer.hscore.config.Config;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.form.util.FormBuilder;

@@ -1,9 +1,9 @@
 package me.hsgamer.bettergui.betterforms;
 
 import me.hsgamer.bettergui.api.addon.GetLogger;
-import me.hsgamer.bettergui.betterforms.form.FloodgateFormSender;
-import me.hsgamer.bettergui.betterforms.form.FormSender;
-import me.hsgamer.bettergui.betterforms.form.GeyserFormSender;
+import me.hsgamer.bettergui.betterforms.sender.FloodgateFormSender;
+import me.hsgamer.bettergui.betterforms.sender.FormSender;
+import me.hsgamer.bettergui.betterforms.sender.GeyserFormSender;
 import me.hsgamer.bettergui.betterforms.modal.ModalFormMenu;
 import me.hsgamer.bettergui.betterforms.simple.SimpleFormMenu;
 import me.hsgamer.bettergui.builder.MenuBuilder;
