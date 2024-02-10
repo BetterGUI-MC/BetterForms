@@ -3,4 +3,3 @@ version: ${project.version}
 main: ${project.mainClass}
 description: ${project.description}
 author: "HSGamer"
-plugin-depend: "floodgate"

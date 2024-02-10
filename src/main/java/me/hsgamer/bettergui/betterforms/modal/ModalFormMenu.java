@@ -1,7 +1,8 @@
 package me.hsgamer.bettergui.betterforms.modal;
 
 import me.hsgamer.bettergui.action.ActionApplier;
-import me.hsgamer.bettergui.api.menu.StandardMenu;
+import me.hsgamer.bettergui.betterforms.common.FormMenu;
+import me.hsgamer.bettergui.betterforms.form.FormSender;
 import me.hsgamer.bettergui.util.ProcessApplierConstants;
 import me.hsgamer.bettergui.util.StringReplacerApplier;
 import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
@@ -13,19 +14,18 @@ import me.hsgamer.hscore.config.PathString;
 import me.hsgamer.hscore.task.BatchRunnable;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.form.ModalForm;
-import org.geysermc.floodgate.api.FloodgateApi;
 
 import java.util.*;
 import java.util.function.BiConsumer;
 
-public class ModalFormMenu extends StandardMenu {
+public class ModalFormMenu extends FormMenu<ModalForm.Builder> {
     private final String title;
     private final String content;
     private final Map<String, ModalButtonComponent> buttonComponentMap = new LinkedHashMap<>();
     private final List<BiConsumer<UUID, ModalForm.Builder>> formModifiers = new ArrayList<>();
 
-    public ModalFormMenu(Config config) {
-        super(config);
+    public ModalFormMenu(FormSender sender, Config config) {
+        super(sender, config);
 
         title = Optional.ofNullable(MapUtils.getIfFound(menuSettings, "title"))
                 .map(Object::toString)
@@ -66,34 +66,14 @@ public class ModalFormMenu extends StandardMenu {
     }
 
     @Override
-    public boolean create(Player player, String[] args, boolean bypass) {
+    protected Optional<ModalForm.Builder> createFormBuilder(Player player, String[] args, boolean bypass) {
         UUID uuid = player.getUniqueId();
-        if (!FloodgateApi.getInstance().isFloodgatePlayer(uuid)) {
-            return false;
-        }
-
         ModalForm.Builder builder = ModalForm.builder();
         builder.title(StringReplacerApplier.replace(title, uuid, this));
         builder.content(StringReplacerApplier.replace(content, uuid, this));
         buttonComponentMap.values().forEach(component -> component.apply(uuid, builder));
         formModifiers.forEach(modifier -> modifier.accept(uuid, builder));
         builder.validResultHandler(response -> buttonComponentMap.values().forEach(component -> component.handle(uuid, response)));
-
-        return FloodgateApi.getInstance().getPlayer(uuid).sendForm(builder);
-    }
-
-    @Override
-    public void update(Player player) {
-        // EMPTY
-    }
-
-    @Override
-    public void close(Player player) {
-        // EMPTY
-    }
-
-    @Override
-    public void closeAll() {
-        // EMPTY
+        return Optional.of(builder);
     }
 }
