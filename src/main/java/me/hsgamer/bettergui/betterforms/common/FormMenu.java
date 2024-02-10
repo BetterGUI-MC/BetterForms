@@ -1,22 +1,24 @@
 package me.hsgamer.bettergui.betterforms.common;
 
+import me.hsgamer.bettergui.action.ActionApplier;
 import me.hsgamer.bettergui.api.menu.StandardMenu;
 import me.hsgamer.bettergui.argument.ArgumentHandler;
 import me.hsgamer.bettergui.betterforms.sender.FormSender;
+import me.hsgamer.bettergui.util.ProcessApplierConstants;
 import me.hsgamer.bettergui.util.StringReplacerApplier;
+import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.hscore.bukkit.utils.PermissionUtils;
 import me.hsgamer.hscore.common.CollectionUtils;
 import me.hsgamer.hscore.common.MapUtils;
 import me.hsgamer.hscore.config.Config;
+import me.hsgamer.hscore.task.BatchRunnable;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.geysermc.cumulus.form.util.FormBuilder;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import static me.hsgamer.bettergui.BetterGUI.getInstance;
@@ -26,6 +28,7 @@ public abstract class FormMenu<T extends FormBuilder<?, ?, ?>> extends StandardM
     private final String title;
     private final List<Permission> permissions;
     private final ArgumentHandler argumentHandler;
+    private final List<BiConsumer<UUID, T>> formModifiers = new ArrayList<>();
 
     protected FormMenu(FormSender sender, Config config) {
         super(config);
@@ -56,6 +59,29 @@ public abstract class FormMenu<T extends FormBuilder<?, ?, ?>> extends StandardM
                 .flatMap(MapUtils::castOptionalStringObjectMap)
                 .map(m -> new ArgumentHandler(this, m))
                 .orElseGet(() -> new ArgumentHandler(this, Collections.emptyMap()));
+
+        Optional.ofNullable(MapUtils.getIfFound(menuSettings, "close-action"))
+                .map(o -> new ActionApplier(this, o))
+                .ifPresent(closeAction -> {
+                    formModifiers.add((uuid, builder) -> {
+                        builder.closedResultHandler(() -> {
+                            BatchRunnable batchRunnable = new BatchRunnable();
+                            batchRunnable.getTaskPool(ProcessApplierConstants.ACTION_STAGE).addLast(process -> closeAction.accept(uuid, process));
+                            Scheduler.current().async().runTask(batchRunnable);
+                        });
+                    });
+                });
+        Optional.ofNullable(MapUtils.getIfFound(menuSettings, "invalid-action"))
+                .map(o -> new ActionApplier(this, o))
+                .ifPresent(invalidAction -> {
+                    formModifiers.add((uuid, builder) -> {
+                        builder.invalidResultHandler(() -> {
+                            BatchRunnable batchRunnable = new BatchRunnable();
+                            batchRunnable.getTaskPool(ProcessApplierConstants.ACTION_STAGE).addLast(process -> invalidAction.accept(uuid, process));
+                            Scheduler.current().async().runTask(batchRunnable);
+                        });
+                    });
+                });
     }
 
     protected abstract Optional<T> createFormBuilder(Player player, String[] args, boolean bypass);
@@ -85,6 +111,7 @@ public abstract class FormMenu<T extends FormBuilder<?, ?, ?>> extends StandardM
 
         T builder = formBuilder.get();
         builder.title(StringReplacerApplier.replace(title, uuid, this));
+        formModifiers.forEach(modifier -> modifier.accept(uuid, builder));
         return sender.sendForm(uuid, builder);
     }
 
