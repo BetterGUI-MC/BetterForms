@@ -45,7 +45,6 @@ public class CustomFormMenu extends FormMenu<CustomForm, CustomForm.Builder> {
         List<Consumer<CustomForm>> consumerList = new ArrayList<>();
         componentMap.forEach((key, value) -> consumerList.add(value.apply(player.getUniqueId(), builder)));
         builder.validResultHandler((form, response) -> {
-            response.includeLabels(true);
             Collection<CustomFormComponent> components = componentMap.values();
             components.forEach(component -> component.handle(uuid, form, response));
             components.forEach(component -> component.execute(uuid, form, response));
