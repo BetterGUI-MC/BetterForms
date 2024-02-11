@@ -9,7 +9,7 @@ public class CustomFormComponentBuilder extends FormComponentBuilder<CustomFormC
     public static final CustomFormComponentBuilder INSTANCE = new CustomFormComponentBuilder();
 
     private CustomFormComponentBuilder() {
-        register(SubmitComponent::new, "submit");
+        register(SubmitComponent::new, "submit", "button");
         register(IconComponent::new, "icon", "image");
         register(LabelComponent::new, "label", "text", "content");
         register(DropdownComponent::new, "dropdown", "select");
