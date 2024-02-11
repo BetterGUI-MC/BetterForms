@@ -65,26 +65,22 @@ public abstract class FormMenu<F extends Form, B extends FormBuilder<?, F, ?>> e
 
         Optional.ofNullable(MapUtils.getIfFound(menuSettings, "close-action"))
                 .map(o -> new ActionApplier(this, o))
-                .ifPresent(closeAction -> {
-                    formModifiers.add((uuid, builder) -> {
-                        builder.closedResultHandler(() -> {
-                            BatchRunnable batchRunnable = new BatchRunnable();
-                            batchRunnable.getTaskPool(ProcessApplierConstants.ACTION_STAGE).addLast(process -> closeAction.accept(uuid, process));
-                            Scheduler.current().async().runTask(batchRunnable);
-                        });
+                .ifPresent(closeAction -> formModifiers.add((uuid, builder) -> {
+                    builder.closedResultHandler(() -> {
+                        BatchRunnable batchRunnable = new BatchRunnable();
+                        batchRunnable.getTaskPool(ProcessApplierConstants.ACTION_STAGE).addLast(process -> closeAction.accept(uuid, process));
+                        Scheduler.current().async().runTask(batchRunnable);
                     });
-                });
+                }));
         Optional.ofNullable(MapUtils.getIfFound(menuSettings, "invalid-action"))
                 .map(o -> new ActionApplier(this, o))
-                .ifPresent(invalidAction -> {
-                    formModifiers.add((uuid, builder) -> {
-                        builder.invalidResultHandler(() -> {
-                            BatchRunnable batchRunnable = new BatchRunnable();
-                            batchRunnable.getTaskPool(ProcessApplierConstants.ACTION_STAGE).addLast(process -> invalidAction.accept(uuid, process));
-                            Scheduler.current().async().runTask(batchRunnable);
-                        });
+                .ifPresent(invalidAction -> formModifiers.add((uuid, builder) -> {
+                    builder.invalidResultHandler(() -> {
+                        BatchRunnable batchRunnable = new BatchRunnable();
+                        batchRunnable.getTaskPool(ProcessApplierConstants.ACTION_STAGE).addLast(process -> invalidAction.accept(uuid, process));
+                        Scheduler.current().async().runTask(batchRunnable);
                     });
-                });
+                }));
     }
 
     protected abstract Optional<Pair<B, Consumer<F>>> createFormConstructor(Player player, String[] args, boolean bypass);
