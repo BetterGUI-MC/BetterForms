@@ -1,6 +1,6 @@
 package me.hsgamer.bettergui.betterforms.sender;
 
-import org.geysermc.cumulus.form.util.FormBuilder;
+import org.geysermc.cumulus.form.Form;
 import org.geysermc.geyser.api.GeyserApi;
 
 import java.util.UUID;
@@ -12,7 +12,7 @@ public class GeyserFormSender implements FormSender {
     }
 
     @Override
-    public boolean sendForm(UUID uuid, FormBuilder<?, ?, ?> formBuilder) {
-        return GeyserApi.api().sendForm(uuid, formBuilder);
+    public boolean sendForm(UUID uuid, Form form) {
+        return GeyserApi.api().sendForm(uuid, form);
     }
 }

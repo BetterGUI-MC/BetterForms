@@ -1,6 +1,10 @@
 package me.hsgamer.bettergui.betterforms.custom;
 
 import me.hsgamer.bettergui.betterforms.common.FormComponentBuilder;
+import me.hsgamer.bettergui.betterforms.custom.component.DropdownComponent;
+import me.hsgamer.bettergui.betterforms.custom.component.IconComponent;
+import me.hsgamer.bettergui.betterforms.custom.component.LabelComponent;
+import me.hsgamer.bettergui.betterforms.custom.component.SubmitComponent;
 
 import java.util.Map;
 

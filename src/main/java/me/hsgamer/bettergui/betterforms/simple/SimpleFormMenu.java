@@ -1,6 +1,6 @@
 package me.hsgamer.bettergui.betterforms.simple;
 
-import me.hsgamer.bettergui.betterforms.common.FormMenu;
+import me.hsgamer.bettergui.betterforms.common.FormBuilderMenu;
 import me.hsgamer.bettergui.betterforms.sender.FormSender;
 import me.hsgamer.bettergui.util.StringReplacerApplier;
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringMap;
@@ -13,7 +13,7 @@ import org.geysermc.cumulus.form.SimpleForm;
 
 import java.util.*;
 
-public class SimpleFormMenu extends FormMenu<SimpleForm.Builder> {
+public class SimpleFormMenu extends FormBuilderMenu<SimpleForm, SimpleForm.Builder> {
     private final String content;
     private final Map<String, SimpleButtonComponent> buttonComponentMap = new LinkedHashMap<>();
 

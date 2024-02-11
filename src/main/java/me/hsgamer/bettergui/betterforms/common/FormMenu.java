@@ -11,24 +11,27 @@ import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.hscore.bukkit.utils.PermissionUtils;
 import me.hsgamer.hscore.common.CollectionUtils;
 import me.hsgamer.hscore.common.MapUtils;
+import me.hsgamer.hscore.common.Pair;
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.task.BatchRunnable;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
+import org.geysermc.cumulus.form.Form;
 import org.geysermc.cumulus.form.util.FormBuilder;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static me.hsgamer.bettergui.BetterGUI.getInstance;
 
-public abstract class FormMenu<T extends FormBuilder<?, ?, ?>> extends StandardMenu {
+public abstract class FormMenu<F extends Form, B extends FormBuilder<?, F, ?>> extends StandardMenu {
     private final FormSender sender;
     private final String title;
     private final List<Permission> permissions;
     private final ArgumentHandler argumentHandler;
-    private final List<BiConsumer<UUID, T>> formModifiers = new ArrayList<>();
+    private final List<BiConsumer<UUID, B>> formModifiers = new ArrayList<>();
 
     protected FormMenu(FormSender sender, Config config) {
         super(config);
@@ -84,7 +87,7 @@ public abstract class FormMenu<T extends FormBuilder<?, ?, ?>> extends StandardM
                 });
     }
 
-    protected abstract Optional<T> createFormBuilder(Player player, String[] args, boolean bypass);
+    protected abstract Optional<Pair<B, Consumer<F>>> createFormConstructor(Player player, String[] args, boolean bypass);
 
     @Override
     public boolean create(Player player, String[] args, boolean bypass) {
@@ -104,15 +107,18 @@ public abstract class FormMenu<T extends FormBuilder<?, ?, ?>> extends StandardM
             return false;
         }
 
-        Optional<T> formBuilder = createFormBuilder(player, args, bypass);
-        if (!formBuilder.isPresent()) {
+        Optional<Pair<B, Consumer<F>>> optional = createFormConstructor(player, args, bypass);
+        if (!optional.isPresent()) {
             return false;
         }
+        Pair<B, Consumer<F>> pair = optional.get();
 
-        T builder = formBuilder.get();
+        B builder = pair.getKey();
         builder.title(StringReplacerApplier.replace(title, uuid, this));
         formModifiers.forEach(modifier -> modifier.accept(uuid, builder));
-        return sender.sendForm(uuid, builder);
+        F form = builder.build();
+        pair.getValue().accept(form);
+        return sender.sendForm(uuid, form);
     }
 
     @Override

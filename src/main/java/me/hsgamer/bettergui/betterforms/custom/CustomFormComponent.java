@@ -5,15 +5,20 @@ import org.geysermc.cumulus.form.CustomForm;
 import org.geysermc.cumulus.response.CustomFormResponse;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public interface CustomFormComponent extends MenuElement {
-    void apply(UUID uuid, CustomForm.Builder builder);
+    default Consumer<CustomForm> apply(UUID uuid, CustomForm.Builder builder) {
+        return form -> {
+            // EMPTY
+        };
+    }
 
-    default void handle(UUID uuid, CustomFormResponse response) {
+    default void handle(UUID uuid, CustomForm form, CustomFormResponse response) {
         // EMPTY
     }
 
-    default void execute(UUID uuid, CustomFormResponse response) {
+    default void execute(UUID uuid, CustomForm form, CustomFormResponse response) {
         // EMPTY
     }
 
