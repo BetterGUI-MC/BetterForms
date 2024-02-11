@@ -1,10 +1,7 @@
 package me.hsgamer.bettergui.betterforms.custom;
 
 import me.hsgamer.bettergui.betterforms.common.FormComponentBuilder;
-import me.hsgamer.bettergui.betterforms.custom.component.DropdownComponent;
-import me.hsgamer.bettergui.betterforms.custom.component.IconComponent;
-import me.hsgamer.bettergui.betterforms.custom.component.LabelComponent;
-import me.hsgamer.bettergui.betterforms.custom.component.SubmitComponent;
+import me.hsgamer.bettergui.betterforms.custom.component.*;
 
 import java.util.Map;
 
@@ -12,7 +9,14 @@ public class CustomFormComponentBuilder extends FormComponentBuilder<CustomFormC
     public static final CustomFormComponentBuilder INSTANCE = new CustomFormComponentBuilder();
 
     private CustomFormComponentBuilder() {
-
+        register(SubmitComponent::new, "submit");
+        register(IconComponent::new, "icon", "image");
+        register(LabelComponent::new, "label", "text", "content");
+        register(DropdownComponent::new, "dropdown", "select");
+        register(InputComponent::new, "input");
+        register(SliderComponent::new, "slider");
+        register(StepSliderComponent::new, "step-slider", "step");
+        register(ToggleComponent::new, "toggle", "switch");
     }
 
     @Override
