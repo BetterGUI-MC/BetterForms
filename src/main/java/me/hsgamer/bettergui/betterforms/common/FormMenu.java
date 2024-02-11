@@ -12,6 +12,7 @@ import me.hsgamer.hscore.bukkit.utils.PermissionUtils;
 import me.hsgamer.hscore.common.CollectionUtils;
 import me.hsgamer.hscore.common.MapUtils;
 import me.hsgamer.hscore.common.Pair;
+import me.hsgamer.hscore.config.CaseInsensitivePathString;
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.task.BatchRunnable;
 import org.bukkit.entity.Player;
@@ -27,6 +28,8 @@ import java.util.stream.Collectors;
 import static me.hsgamer.bettergui.BetterGUI.getInstance;
 
 public abstract class FormMenu<F extends Form, B extends FormBuilder<?, F, ?>> extends StandardMenu {
+    // TODO: Remove this after the next release
+    protected final Map<CaseInsensitivePathString, Object> configSettings;
     private final FormSender sender;
     private final String title;
     private final List<Permission> permissions;
@@ -36,6 +39,12 @@ public abstract class FormMenu<F extends Form, B extends FormBuilder<?, F, ?>> e
     protected FormMenu(FormSender sender, Config config) {
         super(config);
         this.sender = sender;
+
+        // TODO: Remove this after the next release
+        Map<CaseInsensitivePathString, Object> configValues = CaseInsensitivePathString.toCaseInsensitiveMap(config.getNormalizedValues(false));
+        configSettings = configValues.entrySet().stream()
+                .filter(entry -> !entry.getKey().equals(MENU_SETTINGS_PATH))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new));
 
         title = Optional.ofNullable(MapUtils.getIfFound(menuSettings, "title"))
                 .map(Object::toString)
