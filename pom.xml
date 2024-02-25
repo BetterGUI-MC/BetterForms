@@ -18,7 +18,7 @@
   <description>Another Bedrock Forms Addon</description>
 
   <properties>
-    <plugin.version>9.4</plugin.version>
+    <plugin.version>9.5</plugin.version>
     <project.mainClass>me.hsgamer.bettergui.betterforms.BetterForms</project.mainClass>
   </properties>
 
