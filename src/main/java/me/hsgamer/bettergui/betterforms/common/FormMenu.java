@@ -25,6 +25,7 @@ public abstract class FormMenu<F extends Form, B extends FormBuilder<?, F, ?>> e
     private final FormSender sender;
     private final String title;
     private final List<BiConsumer<UUID, B>> formModifiers = new ArrayList<>();
+    private final ActionApplier javaActionApplier;
 
     protected FormMenu(FormSender sender, Config config) {
         super(config);
@@ -33,6 +34,9 @@ public abstract class FormMenu<F extends Form, B extends FormBuilder<?, F, ?>> e
         title = Optional.ofNullable(MapUtils.getIfFound(menuSettings, "title"))
                 .map(Object::toString)
                 .orElse("");
+        javaActionApplier = Optional.ofNullable(MapUtils.getIfFound(menuSettings, "java-action"))
+                .map(o -> new ActionApplier(this, o))
+                .orElse(ActionApplier.EMPTY);
         Optional.ofNullable(MapUtils.getIfFound(menuSettings, "invalid-action"))
                 .map(o -> new ActionApplier(this, o))
                 .ifPresent(invalidAction -> formModifiers.add((uuid, builder) -> {
@@ -42,7 +46,6 @@ public abstract class FormMenu<F extends Form, B extends FormBuilder<?, F, ?>> e
                         Scheduler.current().async().runTask(batchRunnable);
                     });
                 }));
-
 
         if (!closeActionApplier.isEmpty()) {
             formModifiers.add((uuid, builder) -> {
@@ -61,6 +64,11 @@ public abstract class FormMenu<F extends Form, B extends FormBuilder<?, F, ?>> e
     protected boolean createChecked(Player player, String[] args, boolean bypass) {
         UUID uuid = player.getUniqueId();
         if (!sender.canSendForm(uuid)) {
+            if (!javaActionApplier.isEmpty()) {
+                BatchRunnable batchRunnable = new BatchRunnable();
+                batchRunnable.getTaskPool(ProcessApplierConstants.ACTION_STAGE).addLast(process -> javaActionApplier.accept(uuid, process));
+                Scheduler.current().async().runTask(batchRunnable);
+            }
             return false;
         }
 
