@@ -8,11 +8,14 @@ import me.hsgamer.bettergui.betterforms.sender.FormSender;
 import me.hsgamer.bettergui.betterforms.sender.GeyserFormSender;
 import me.hsgamer.bettergui.betterforms.simple.SimpleFormMenu;
 import me.hsgamer.bettergui.builder.MenuBuilder;
+import me.hsgamer.hscore.common.StringReplacer;
 import me.hsgamer.hscore.expansion.common.Expansion;
 import me.hsgamer.hscore.logger.common.LogLevel;
+import me.hsgamer.hscore.variable.VariableBundle;
 import org.bukkit.Bukkit;
 
 public final class BetterForms implements Expansion, GetLogger {
+    private final VariableBundle variableBundle = new VariableBundle();
     private boolean isGeyserInstalled;
     private boolean isFloodgateInstalled;
 
@@ -42,5 +45,7 @@ public final class BetterForms implements Expansion, GetLogger {
         MenuBuilder.INSTANCE.register(config -> new ModalFormMenu(sender, config), "modal-form");
         MenuBuilder.INSTANCE.register(config -> new SimpleFormMenu(sender, config), "simple-form");
         MenuBuilder.INSTANCE.register(config -> new CustomFormMenu(sender, config), "custom-form");
+
+        variableBundle.register("player_bedrock", StringReplacer.of((original, uuid) -> Boolean.toString(sender.canSendForm(uuid))));
     }
 }
