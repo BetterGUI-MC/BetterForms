@@ -46,6 +46,6 @@ public final class BetterForms implements Expansion, GetLogger {
         MenuBuilder.INSTANCE.register(config -> new SimpleFormMenu(sender, config), "simple-form");
         MenuBuilder.INSTANCE.register(config -> new CustomFormMenu(sender, config), "custom-form");
 
-        variableBundle.register("player_bedrock", StringReplacer.of((original, uuid) -> Boolean.toString(sender.canSendForm(uuid))), true);
+        variableBundle.register("forms_accept", StringReplacer.of((original, uuid) -> Boolean.toString(sender.canSendForm(uuid))), true);
     }
 }
