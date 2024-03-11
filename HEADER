@@ -1,5 +1,5 @@
 /*
-   Copyright 2024 Huynh Tien
+   Copyright $YEAR Huynh Tien
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -13,21 +13,3 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package me.hsgamer.bettergui.betterforms.sender;
-
-import org.geysermc.cumulus.form.Form;
-import org.geysermc.floodgate.api.FloodgateApi;
-
-import java.util.UUID;
-
-public class FloodgateFormSender implements FormSender {
-    @Override
-    public boolean canSendForm(UUID uuid) {
-        return FloodgateApi.getInstance().isFloodgatePlayer(uuid);
-    }
-
-    @Override
-    public boolean sendForm(UUID uuid, Form form) {
-        return FloodgateApi.getInstance().sendForm(uuid, form);
-    }
-}
