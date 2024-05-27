@@ -17,7 +17,6 @@ package me.hsgamer.bettergui.betterforms.common;
 
 import me.hsgamer.bettergui.action.ActionApplier;
 import me.hsgamer.bettergui.api.menu.Menu;
-import me.hsgamer.bettergui.api.menu.MenuElement;
 import me.hsgamer.bettergui.api.requirement.Requirement;
 import me.hsgamer.bettergui.requirement.RequirementApplier;
 import me.hsgamer.bettergui.util.ProcessApplierConstants;
@@ -30,7 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-public class CommonButtonComponent implements MenuElement {
+public class CommonButtonComponent implements FormComponent {
     protected final Menu menu;
     private final ActionApplier actionApplier;
     private final RequirementApplier requirementApplier;
