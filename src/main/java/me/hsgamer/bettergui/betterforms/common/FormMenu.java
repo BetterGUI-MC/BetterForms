@@ -19,8 +19,8 @@ import me.hsgamer.bettergui.action.ActionApplier;
 import me.hsgamer.bettergui.betterforms.sender.FormSender;
 import me.hsgamer.bettergui.menu.BaseMenu;
 import me.hsgamer.bettergui.util.ProcessApplierConstants;
+import me.hsgamer.bettergui.util.SchedulerUtil;
 import me.hsgamer.bettergui.util.StringReplacerApplier;
-import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
 import me.hsgamer.hscore.common.MapUtils;
 import me.hsgamer.hscore.common.Pair;
 import me.hsgamer.hscore.config.Config;
@@ -58,7 +58,7 @@ public abstract class FormMenu<F extends Form, B extends FormBuilder<?, F, ?>> e
                     builder.invalidResultHandler(() -> {
                         BatchRunnable batchRunnable = new BatchRunnable();
                         batchRunnable.getTaskPool(ProcessApplierConstants.ACTION_STAGE).addLast(process -> invalidAction.accept(uuid, process));
-                        Scheduler.current().async().runTask(batchRunnable);
+                        SchedulerUtil.async().run(batchRunnable);
                     });
                 }));
 
@@ -67,7 +67,7 @@ public abstract class FormMenu<F extends Form, B extends FormBuilder<?, F, ?>> e
                 builder.closedResultHandler(() -> {
                     BatchRunnable batchRunnable = new BatchRunnable();
                     batchRunnable.getTaskPool(ProcessApplierConstants.ACTION_STAGE).addLast(process -> closeActionApplier.accept(uuid, process));
-                    Scheduler.current().async().runTask(batchRunnable);
+                    SchedulerUtil.async().run(batchRunnable);
                 });
             });
         }
@@ -82,7 +82,7 @@ public abstract class FormMenu<F extends Form, B extends FormBuilder<?, F, ?>> e
             if (!javaActionApplier.isEmpty()) {
                 BatchRunnable batchRunnable = new BatchRunnable();
                 batchRunnable.getTaskPool(ProcessApplierConstants.ACTION_STAGE).addLast(process -> javaActionApplier.accept(uuid, process));
-                Scheduler.current().async().runTask(batchRunnable);
+                SchedulerUtil.async().run(batchRunnable);
             }
             return false;
         }
@@ -102,7 +102,7 @@ public abstract class FormMenu<F extends Form, B extends FormBuilder<?, F, ?>> e
             if (!openActionApplier.isEmpty()) {
                 BatchRunnable batchRunnable = new BatchRunnable();
                 batchRunnable.getTaskPool(ProcessApplierConstants.ACTION_STAGE).addLast(process -> openActionApplier.accept(uuid, process));
-                Scheduler.current().async().runTask(batchRunnable);
+                SchedulerUtil.async().run(batchRunnable);
             }
             return true;
         } else {

@@ -20,7 +20,7 @@ import me.hsgamer.bettergui.api.menu.Menu;
 import me.hsgamer.bettergui.api.requirement.Requirement;
 import me.hsgamer.bettergui.requirement.RequirementApplier;
 import me.hsgamer.bettergui.util.ProcessApplierConstants;
-import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
+import me.hsgamer.bettergui.util.SchedulerUtil;
 import me.hsgamer.hscore.common.MapUtils;
 import me.hsgamer.hscore.task.BatchRunnable;
 
@@ -62,7 +62,7 @@ public class CommonButtonComponent implements FormComponent {
                     }
                     process.next();
                 });
-        Scheduler.current().async().runTask(batchRunnable);
+        SchedulerUtil.async().run(batchRunnable);
     }
 
     @Override

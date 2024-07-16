@@ -23,7 +23,7 @@ import me.hsgamer.bettergui.betterforms.sender.FormSender;
 import me.hsgamer.bettergui.betterforms.sender.GeyserFormSender;
 import me.hsgamer.bettergui.betterforms.simple.SimpleFormMenu;
 import me.hsgamer.bettergui.builder.MenuBuilder;
-import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
+import me.hsgamer.bettergui.util.SchedulerUtil;
 import me.hsgamer.hscore.common.StringReplacer;
 import me.hsgamer.hscore.expansion.common.Expansion;
 import me.hsgamer.hscore.license.common.LicenseChecker;
@@ -75,7 +75,7 @@ public final class BetterForms implements Expansion, GetLogger {
         LicenseChecker licenseChecker = PolymartLicenseChecker.isAvailable()
                 ? new PolymartLicenseChecker("5616", true, true)
                 : new SpigotLicenseChecker("115565");
-        Scheduler.current().async().runTask(() -> {
+        SchedulerUtil.async().run(() -> {
             LicenseResult result = licenseChecker.checkLicense();
             switch (result.getStatus()) {
                 case VALID:

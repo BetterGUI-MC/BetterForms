@@ -20,9 +20,7 @@ import me.hsgamer.bettergui.betterforms.sender.FormSender;
 import me.hsgamer.bettergui.util.StringReplacerApplier;
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringMap;
 import me.hsgamer.hscore.common.MapUtils;
-import me.hsgamer.hscore.config.CaseInsensitivePathString;
 import me.hsgamer.hscore.config.Config;
-import me.hsgamer.hscore.config.PathString;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.form.ModalForm;
 
@@ -40,8 +38,8 @@ public class ModalFormMenu extends FormBuilderMenu<ModalForm, ModalForm.Builder>
                 .orElse("");
 
         boolean first = true;
-        for (Map.Entry<CaseInsensitivePathString, Object> configEntry : configSettings.entrySet()) {
-            String key = PathString.toPath(configEntry.getKey().getPathString());
+        for (Map.Entry<String, Object> configEntry : configSettings.entrySet()) {
+            String key = configEntry.getKey();
             Map<String, Object> value = MapUtils.castOptionalStringObjectMap(configEntry.getValue())
                     .<Map<String, Object>>map(CaseInsensitiveStringMap::new)
                     .orElseGet(Collections::emptyMap);

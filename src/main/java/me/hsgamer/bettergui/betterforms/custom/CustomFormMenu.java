@@ -22,9 +22,7 @@ import me.hsgamer.hscore.collections.map.CaseInsensitiveStringMap;
 import me.hsgamer.hscore.common.MapUtils;
 import me.hsgamer.hscore.common.Pair;
 import me.hsgamer.hscore.common.StringReplacer;
-import me.hsgamer.hscore.config.CaseInsensitivePathString;
 import me.hsgamer.hscore.config.Config;
-import me.hsgamer.hscore.config.PathString;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.form.CustomForm;
 
@@ -37,8 +35,8 @@ public class CustomFormMenu extends FormMenu<CustomForm, CustomForm.Builder> {
     public CustomFormMenu(FormSender sender, Config config) {
         super(sender, config);
 
-        for (Map.Entry<CaseInsensitivePathString, Object> configEntry : configSettings.entrySet()) {
-            String key = PathString.toPath(configEntry.getKey().getPathString());
+        for (Map.Entry<String, Object> configEntry : configSettings.entrySet()) {
+            String key = configEntry.getKey();
             MapUtils.castOptionalStringObjectMap(configEntry.getValue())
                     .map(CaseInsensitiveStringMap::new)
                     .map(map -> new CustomFormComponentBuilder.Input(this, key, map))
