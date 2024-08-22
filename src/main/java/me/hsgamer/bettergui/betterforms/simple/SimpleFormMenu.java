@@ -32,6 +32,7 @@ public class SimpleFormMenu extends FormMenu<SimpleForm, SimpleFormResponse, Sim
 
     public SimpleFormMenu(FormSender sender, Config config) {
         super(sender, config);
+
         content = Optional.ofNullable(MapUtils.getIfFound(menuSettings, "content"))
                 .map(Object::toString)
                 .orElse("");
