@@ -20,6 +20,7 @@ import me.hsgamer.bettergui.betterforms.api.sender.FormSender;
 import me.hsgamer.bettergui.betterforms.modal.ModalFormMenu;
 import me.hsgamer.bettergui.betterforms.sender.FloodgateFormSender;
 import me.hsgamer.bettergui.betterforms.sender.GeyserFormSender;
+import me.hsgamer.bettergui.betterforms.simple.SimpleFormMenu;
 import me.hsgamer.bettergui.builder.MenuBuilder;
 import me.hsgamer.bettergui.util.SchedulerUtil;
 import me.hsgamer.hscore.common.StringReplacer;
@@ -63,7 +64,7 @@ public final class BetterForms implements Expansion, GetLogger {
         }
 
         MenuBuilder.INSTANCE.register(config -> new ModalFormMenu(sender, config), "modal-form");
-//        MenuBuilder.INSTANCE.register(config -> new SimpleFormMenu(sender, config), "simple-form");
+        MenuBuilder.INSTANCE.register(config -> new SimpleFormMenu(sender, config), "simple-form");
 //        MenuBuilder.INSTANCE.register(config -> new CustomFormMenu(sender, config), "custom-form");
 
         variableBundle.register("forms_accept", StringReplacer.of((original, uuid) -> Boolean.toString(sender.canSendForm(uuid))), true);
