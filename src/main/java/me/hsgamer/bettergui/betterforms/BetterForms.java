@@ -17,10 +17,10 @@ package me.hsgamer.bettergui.betterforms;
 
 import me.hsgamer.bettergui.api.addon.GetLogger;
 import me.hsgamer.bettergui.betterforms.api.sender.FormSender;
-import me.hsgamer.bettergui.betterforms.modal.ModalFormMenu;
+import me.hsgamer.bettergui.betterforms.impl.modal.ModalFormMenu;
 import me.hsgamer.bettergui.betterforms.sender.FloodgateFormSender;
 import me.hsgamer.bettergui.betterforms.sender.GeyserFormSender;
-import me.hsgamer.bettergui.betterforms.simple.SimpleFormMenu;
+import me.hsgamer.bettergui.betterforms.impl.simple.SimpleFormMenu;
 import me.hsgamer.bettergui.builder.MenuBuilder;
 import me.hsgamer.bettergui.util.SchedulerUtil;
 import me.hsgamer.hscore.common.StringReplacer;

@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package me.hsgamer.bettergui.betterforms.modal;
+package me.hsgamer.bettergui.betterforms.impl.simple;
 
 import me.hsgamer.bettergui.betterforms.api.builder.ComponentProviderBuilder;
 import me.hsgamer.bettergui.betterforms.api.menu.FormMenu;
@@ -22,15 +22,15 @@ import me.hsgamer.bettergui.util.StringReplacerApplier;
 import me.hsgamer.hscore.common.MapUtils;
 import me.hsgamer.hscore.config.Config;
 import org.bukkit.entity.Player;
-import org.geysermc.cumulus.form.ModalForm;
-import org.geysermc.cumulus.response.ModalFormResponse;
+import org.geysermc.cumulus.form.SimpleForm;
+import org.geysermc.cumulus.response.SimpleFormResponse;
 
 import java.util.Optional;
 
-public class ModalFormMenu extends FormMenu<ModalForm, ModalFormResponse, ModalForm.Builder> {
+public class SimpleFormMenu extends FormMenu<SimpleForm, SimpleFormResponse, SimpleForm.Builder> {
     private final String content;
 
-    public ModalFormMenu(FormSender sender, Config config) {
+    public SimpleFormMenu(FormSender sender, Config config) {
         super(sender, config);
 
         content = Optional.ofNullable(MapUtils.getIfFound(menuSettings, "content"))
@@ -39,14 +39,14 @@ public class ModalFormMenu extends FormMenu<ModalForm, ModalFormResponse, ModalF
     }
 
     @Override
-    protected ModalForm.Builder createFormBuilder(Player player) {
-        return ModalForm.builder().content(StringReplacerApplier.replace(content, player.getUniqueId(), this));
+    protected SimpleForm.Builder createFormBuilder(Player player) {
+        return SimpleForm.builder().content(StringReplacerApplier.replace(content, player.getUniqueId(), this));
     }
 
     @Override
-    protected ComponentProviderBuilder<ModalForm, ModalFormResponse, ModalForm.Builder> getComponentProviderBuilder() {
-        ComponentProviderBuilder<ModalForm, ModalFormResponse, ModalForm.Builder> builder = new ComponentProviderBuilder<>();
-        builder.register(ModalButtonComponentProvider::new, "button", "");
+    protected ComponentProviderBuilder<SimpleForm, SimpleFormResponse, SimpleForm.Builder> getComponentProviderBuilder() {
+        ComponentProviderBuilder<SimpleForm, SimpleFormResponse, SimpleForm.Builder> builder = new ComponentProviderBuilder<>();
+        builder.register(SimpleButtonComponentProvider::new, "button", "");
         return builder;
     }
 }
