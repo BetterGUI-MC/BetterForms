@@ -28,6 +28,12 @@ import org.geysermc.cumulus.response.ModalFormResponse;
 import java.util.Optional;
 
 public class ModalFormMenu extends FormMenu<ModalForm, ModalFormResponse, ModalForm.Builder> {
+    private static final ComponentProviderBuilder<ModalForm, ModalFormResponse, ModalForm.Builder> builder = new ComponentProviderBuilder<>();
+
+    static {
+        builder.register(ModalButtonComponentProvider::new, "button", "");
+    }
+
     private final String content;
 
     public ModalFormMenu(FormSender sender, Config config) {
@@ -45,8 +51,6 @@ public class ModalFormMenu extends FormMenu<ModalForm, ModalFormResponse, ModalF
 
     @Override
     protected ComponentProviderBuilder<ModalForm, ModalFormResponse, ModalForm.Builder> getComponentProviderBuilder() {
-        ComponentProviderBuilder<ModalForm, ModalFormResponse, ModalForm.Builder> builder = new ComponentProviderBuilder<>();
-        builder.register(ModalButtonComponentProvider::new, "button", "");
         return builder;
     }
 }

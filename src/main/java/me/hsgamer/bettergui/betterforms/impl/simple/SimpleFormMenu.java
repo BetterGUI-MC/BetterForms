@@ -28,6 +28,12 @@ import org.geysermc.cumulus.response.SimpleFormResponse;
 import java.util.Optional;
 
 public class SimpleFormMenu extends FormMenu<SimpleForm, SimpleFormResponse, SimpleForm.Builder> {
+    private static final ComponentProviderBuilder<SimpleForm, SimpleFormResponse, SimpleForm.Builder> builder = new ComponentProviderBuilder<>();
+
+    static {
+        builder.register(SimpleButtonComponentProvider::new, "button", "");
+    }
+
     private final String content;
 
     public SimpleFormMenu(FormSender sender, Config config) {
@@ -45,8 +51,6 @@ public class SimpleFormMenu extends FormMenu<SimpleForm, SimpleFormResponse, Sim
 
     @Override
     protected ComponentProviderBuilder<SimpleForm, SimpleFormResponse, SimpleForm.Builder> getComponentProviderBuilder() {
-        ComponentProviderBuilder<SimpleForm, SimpleFormResponse, SimpleForm.Builder> builder = new ComponentProviderBuilder<>();
-        builder.register(SimpleButtonComponentProvider::new, "button", "");
         return builder;
     }
 }
