@@ -18,37 +18,34 @@ package me.hsgamer.bettergui.betterforms.impl.custom;
 import me.hsgamer.bettergui.betterforms.api.builder.ComponentProviderBuilder;
 import me.hsgamer.bettergui.betterforms.api.component.Component;
 import me.hsgamer.bettergui.betterforms.common.BaseComponentProvider;
+import me.hsgamer.bettergui.betterforms.util.ComponentUtil;
 import org.geysermc.cumulus.form.CustomForm;
 import org.geysermc.cumulus.response.CustomFormResponse;
+import org.geysermc.cumulus.util.FormImage;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
-public abstract class ValueComponentProvider extends BaseComponentProvider<CustomForm, CustomFormResponse, CustomForm.Builder> {
-    private final Map<UUID, String> valueMap = new ConcurrentHashMap<>();
+public class IconComponentProvider extends BaseComponentProvider<CustomForm, CustomFormResponse, CustomForm.Builder> {
+    private final Function<UUID, FormImage> imageFunction;
 
-    protected ValueComponentProvider(ComponentProviderBuilder.Input input) {
+    public IconComponentProvider(ComponentProviderBuilder.Input input) {
         super(input);
+
+        imageFunction = ComponentUtil.createImageFunction(input.options, this);
     }
-
-    protected abstract void apply(UUID uuid, CustomForm.Builder builder);
-
-    protected abstract String getValue(UUID uuid, CustomFormResponse response);
 
     @Override
     protected List<Component<CustomForm, CustomFormResponse, CustomForm.Builder>> provideChecked(UUID uuid, int index) {
         return Collections.singletonList(new Component<CustomForm, CustomFormResponse, CustomForm.Builder>() {
             @Override
             public void apply(CustomForm.Builder builder) {
-                ValueComponentProvider.this.apply(uuid, builder);
-            }
-
-            @Override
-            public void preHandle(CustomForm form, CustomFormResponse response) {
-                valueMap.put(uuid, getValue(uuid, response));
+                FormImage image = imageFunction.apply(uuid);
+                if (image != null) {
+                    builder.icon(image);
+                }
             }
 
             @Override
@@ -56,10 +53,5 @@ public abstract class ValueComponentProvider extends BaseComponentProvider<Custo
                 // EMPTY
             }
         });
-    }
-
-    @Override
-    public String getValue(UUID uuid, String args) {
-        return valueMap.getOrDefault(uuid, "");
     }
 }
