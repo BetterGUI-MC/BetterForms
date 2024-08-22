@@ -1,46 +1,33 @@
-/*
-   Copyright 2024 Huynh Tien
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
-package me.hsgamer.bettergui.betterforms.common;
+package me.hsgamer.bettergui.betterforms.api.menu;
 
 import me.hsgamer.bettergui.action.ActionApplier;
-import me.hsgamer.bettergui.betterforms.sender.FormSender;
+import me.hsgamer.bettergui.betterforms.api.builder.ComponentProviderBuilder;
+import me.hsgamer.bettergui.betterforms.api.component.Component;
+import me.hsgamer.bettergui.betterforms.api.component.ComponentProvider;
+import me.hsgamer.bettergui.betterforms.api.sender.FormSender;
 import me.hsgamer.bettergui.menu.BaseMenu;
 import me.hsgamer.bettergui.util.ProcessApplierConstants;
 import me.hsgamer.bettergui.util.SchedulerUtil;
 import me.hsgamer.bettergui.util.StringReplacerApplier;
+import me.hsgamer.hscore.collections.map.CaseInsensitiveStringMap;
 import me.hsgamer.hscore.common.MapUtils;
-import me.hsgamer.hscore.common.Pair;
+import me.hsgamer.hscore.common.StringReplacer;
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.task.BatchRunnable;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.form.Form;
 import org.geysermc.cumulus.form.util.FormBuilder;
+import org.geysermc.cumulus.response.FormResponse;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
-public abstract class FormMenu<F extends Form, B extends FormBuilder<?, F, ?>> extends BaseMenu {
+public abstract class FormMenu<F extends Form, R extends FormResponse, B extends FormBuilder<B, F, R>> extends BaseMenu {
     private final FormSender sender;
     private final String title;
     private final List<BiConsumer<UUID, B>> formModifiers = new ArrayList<>();
     private final ActionApplier javaActionApplier;
+    private final Map<String, ComponentProvider<F, R, B>> componentMap = new LinkedHashMap<>();
 
     protected FormMenu(FormSender sender, Config config) {
         super(config);
@@ -62,6 +49,16 @@ public abstract class FormMenu<F extends Form, B extends FormBuilder<?, F, ?>> e
                     });
                 }));
 
+        ComponentProviderBuilder<F, R, B> componentProviderBuilder = getComponentProviderBuilder();
+        for (Map.Entry<String, Object> configEntry : configSettings.entrySet()) {
+            String key = configEntry.getKey();
+            MapUtils.castOptionalStringObjectMap(configEntry.getValue())
+                    .map(CaseInsensitiveStringMap::new)
+                    .map(map -> new ComponentProviderBuilder.Input(this, key, map))
+                    .flatMap(componentProviderBuilder::build)
+                    .ifPresent(customFormComponent -> componentMap.put(key, customFormComponent));
+        }
+
         if (!closeActionApplier.isEmpty()) {
             formModifiers.add((uuid, builder) -> {
                 builder.closedResultHandler(() -> {
@@ -71,9 +68,20 @@ public abstract class FormMenu<F extends Form, B extends FormBuilder<?, F, ?>> e
                 });
             });
         }
+
+        variableManager.register("form_", StringReplacer.of((original, uuid) -> {
+            String[] split = original.split(":", 2);
+            String component = split[0];
+            String key = split.length > 1 ? split[1] : "";
+            return Optional.ofNullable(componentMap.get(component))
+                    .map(provider -> provider.getValue(uuid, key))
+                    .orElse(null);
+        }));
     }
 
-    protected abstract Optional<Pair<B, Consumer<F>>> createFormConstructor(Player player, String[] args, boolean bypass);
+    protected abstract B createFormBuilder();
+
+    protected abstract ComponentProviderBuilder<F, R, B> getComponentProviderBuilder();
 
     @Override
     protected boolean createChecked(Player player, String[] args, boolean bypass) {
@@ -87,17 +95,26 @@ public abstract class FormMenu<F extends Form, B extends FormBuilder<?, F, ?>> e
             return false;
         }
 
-        Optional<Pair<B, Consumer<F>>> optional = createFormConstructor(player, args, bypass);
-        if (!optional.isPresent()) {
-            return false;
-        }
-        Pair<B, Consumer<F>> pair = optional.get();
-
-        B builder = pair.getKey();
+        B builder = createFormBuilder();
         builder.title(StringReplacerApplier.replace(title, uuid, this));
+
+        List<Component<F, R, B>> components = new ArrayList<>();
+        for (ComponentProvider<F, R, B> provider : componentMap.values()) {
+            List<Component<F, R, B>> newComponents = provider.provide(uuid, components.size());
+            components.addAll(newComponents);
+        }
+
+        components.forEach(component -> component.apply(builder));
         formModifiers.forEach(modifier -> modifier.accept(uuid, builder));
+
+        builder.validResultHandler((form, response) -> {
+            components.forEach(component -> component.preHandle(form, response));
+            components.forEach(component -> component.handle(form, response));
+        });
+
         F form = builder.build();
-        pair.getValue().accept(form);
+        components.forEach(component -> component.postApply(form));
+
         if (sender.sendForm(uuid, form)) {
             if (!openActionApplier.isEmpty()) {
                 BatchRunnable batchRunnable = new BatchRunnable();

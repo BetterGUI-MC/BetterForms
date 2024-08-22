@@ -13,21 +13,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package me.hsgamer.bettergui.betterforms.custom.component;
+package me.hsgamer.bettergui.betterforms.api.sender;
 
-import me.hsgamer.bettergui.api.menu.Menu;
-import me.hsgamer.bettergui.betterforms.custom.CustomFormComponent;
-import me.hsgamer.bettergui.betterforms.custom.CustomFormComponentBuilder;
+import org.geysermc.cumulus.form.Form;
 
-public class StandardCustomFormComponent implements CustomFormComponent {
-    protected final CustomFormComponentBuilder.Input input;
+import java.util.UUID;
 
-    public StandardCustomFormComponent(CustomFormComponentBuilder.Input input) {
-        this.input = input;
-    }
+public interface FormSender {
+    boolean canSendForm(UUID uuid);
 
-    @Override
-    public Menu getMenu() {
-        return input.menu;
-    }
+    boolean sendForm(UUID uuid, Form form);
 }
