@@ -31,7 +31,7 @@ public class ModalFormMenu extends FormMenu<ModalForm, ModalFormResponse, ModalF
     @Override
     protected ComponentProviderBuilder<ModalForm, ModalFormResponse, ModalForm.Builder> getComponentProviderBuilder() {
         ComponentProviderBuilder<ModalForm, ModalFormResponse, ModalForm.Builder> builder = new ComponentProviderBuilder<>();
-        builder.register(ModalButtonComponent::new, "button", "");
+        builder.register(ModalButtonComponentProvider::new, "button", "");
         return builder;
     }
 }

@@ -32,10 +32,10 @@ public abstract class BaseComponentProvider<F extends Form, R extends FormRespon
                 .orElse(RequirementApplier.EMPTY);
     }
 
-    protected abstract List<Component<F, R, B>> provideChecked(UUID uuid, int currentComponentSize);
+    protected abstract List<Component<F, R, B>> provideChecked(UUID uuid, int index);
 
     @Override
-    public List<Component<F, R, B>> provide(UUID uuid, int currentComponentSize) {
+    public List<Component<F, R, B>> provide(UUID uuid, int index) {
         Requirement.Result result = viewRequirementApplier.getResult(uuid);
 
         BatchRunnable batchRunnable = new BatchRunnable();
@@ -46,7 +46,7 @@ public abstract class BaseComponentProvider<F extends Form, R extends FormRespon
         SchedulerUtil.async().run(batchRunnable);
 
         if (result.isSuccess) {
-            return provideChecked(uuid, currentComponentSize);
+            return provideChecked(uuid, index);
         } else {
             return Collections.emptyList();
         }

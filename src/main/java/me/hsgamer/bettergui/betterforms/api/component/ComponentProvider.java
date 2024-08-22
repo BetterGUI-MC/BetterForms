@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ComponentProvider<F extends Form, R extends FormResponse, B extends FormBuilder<B, F, R>> extends MenuElement {
-    List<Component<F, R, B>> provide(UUID uuid, int currentComponentSize);
+    List<Component<F, R, B>> provide(UUID uuid, int index);
 
     default String getValue(UUID uuid, String args) {
         return "";

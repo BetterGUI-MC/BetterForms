@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class ModalButtonComponent extends CommonButtonComponentProvider<ModalForm, ModalFormResponse, ModalForm.Builder> {
+public class ModalButtonComponentProvider extends CommonButtonComponentProvider<ModalForm, ModalFormResponse, ModalForm.Builder> {
     private final String value;
 
-    public ModalButtonComponent(ComponentProviderBuilder.Input input) {
+    public ModalButtonComponentProvider(ComponentProviderBuilder.Input input) {
         super(input);
         value = Optional.ofNullable(MapUtils.getIfFound(input.options, "value", "text", "content"))
                 .map(Object::toString)
@@ -24,12 +24,12 @@ public class ModalButtonComponent extends CommonButtonComponentProvider<ModalFor
     }
 
     @Override
-    protected List<Component<ModalForm, ModalFormResponse, ModalForm.Builder>> provideChecked(UUID uuid, int currentComponentSize) {
-        boolean first = currentComponentSize == 0;
+    protected List<Component<ModalForm, ModalFormResponse, ModalForm.Builder>> provideChecked(UUID uuid, int index) {
+        boolean first = index == 0;
         return Collections.singletonList(new Component<ModalForm, ModalFormResponse, ModalForm.Builder>() {
             @Override
             public void apply(ModalForm.Builder builder) {
-                String replaced = StringReplacerApplier.replace(value, uuid, ModalButtonComponent.this);
+                String replaced = StringReplacerApplier.replace(value, uuid, ModalButtonComponentProvider.this);
                 if (first) {
                     builder.button1(replaced);
                 } else {
