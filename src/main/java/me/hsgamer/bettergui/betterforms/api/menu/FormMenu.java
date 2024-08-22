@@ -79,7 +79,7 @@ public abstract class FormMenu<F extends Form, R extends FormResponse, B extends
         }));
     }
 
-    protected abstract B createFormBuilder();
+    protected abstract B createFormBuilder(Player player);
 
     protected abstract ComponentProviderBuilder<F, R, B> getComponentProviderBuilder();
 
@@ -95,7 +95,7 @@ public abstract class FormMenu<F extends Form, R extends FormResponse, B extends
             return false;
         }
 
-        B builder = createFormBuilder();
+        B builder = createFormBuilder(player);
         builder.title(StringReplacerApplier.replace(title, uuid, this));
 
         List<Component<F, R, B>> components = new ArrayList<>();
