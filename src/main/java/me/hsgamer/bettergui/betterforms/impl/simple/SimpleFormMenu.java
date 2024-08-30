@@ -25,7 +25,7 @@ import org.bukkit.entity.Player;
 import org.geysermc.cumulus.form.SimpleForm;
 import org.geysermc.cumulus.response.SimpleFormResponse;
 
-import java.util.Optional;
+import java.util.List;
 
 public class SimpleFormMenu extends FormMenu<SimpleForm, SimpleFormResponse, SimpleForm.Builder> {
     private static final ComponentProviderBuilder<SimpleForm, SimpleFormResponse, SimpleForm.Builder> builder = new ComponentProviderBuilder<>();
@@ -34,19 +34,27 @@ public class SimpleFormMenu extends FormMenu<SimpleForm, SimpleFormResponse, Sim
         builder.register(SimpleButtonComponentProvider::new, "button", "");
     }
 
-    private final String content;
+    private final StringBuilder content = new StringBuilder();
 
     public SimpleFormMenu(FormSender sender, Config config) {
         super(sender, config);
 
-        content = Optional.ofNullable(MapUtils.getIfFound(menuSettings, "content"))
-                .map(Object::toString)
-                .orElse("");
+        Object source = MapUtils.getIfFound(menuSettings, "content");
+        if (source == null) {
+            return;
+        }
+        if (source instanceof List<?>) {
+            for (Object item : (List<?>) source) {
+                content.append(item.toString()).append("\n");
+            }
+            return;
+        }
+        content.append(source);
     }
 
     @Override
     protected SimpleForm.Builder createFormBuilder(Player player) {
-        return SimpleForm.builder().content(StringReplacerApplier.replace(content, player.getUniqueId(), this));
+        return SimpleForm.builder().content(StringReplacerApplier.replace(content.toString(), player.getUniqueId(), this));
     }
 
     @Override
