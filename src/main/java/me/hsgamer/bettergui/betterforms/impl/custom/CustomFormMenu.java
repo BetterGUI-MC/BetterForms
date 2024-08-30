@@ -32,9 +32,9 @@ public class CustomFormMenu extends FormMenu<CustomForm, CustomFormResponse, Cus
         builder.register(LabelComponentProvider::new, "label", "text", "content");
         builder.register(DropdownComponentProvider::new, "dropdown", "select");
         builder.register(InputComponentProvider::new, "input");
-        builder.register(SubmitComponentProvider::new, "slider");
+        builder.register(SliderComponentProvider::new, "slider");
         builder.register(StepSliderComponentProvider::new, "step-slider", "step");
-        builder.register(SubmitComponentProvider::new, "toggle", "switch");
+        builder.register(ToggleComponentProvider::new, "toggle", "switch");
     }
 
     public CustomFormMenu(FormSender sender, Config config) {
