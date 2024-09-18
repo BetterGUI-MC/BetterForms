@@ -39,7 +39,7 @@ public class SimpleButtonComponentProvider extends CommonButtonComponentProvider
         super(input);
 
         value = Optional.ofNullable(MapUtils.getIfFound(input.options, "value", "text", "content"))
-                .map(Object::toString)
+                .map(ComponentUtil::toMultilineString)
                 .orElse("");
         imageFunction = ComponentUtil.createImageFunction(input.options, this);
     }

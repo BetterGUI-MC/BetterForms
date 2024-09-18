@@ -17,9 +17,11 @@ package me.hsgamer.bettergui.betterforms.util;
 
 import me.hsgamer.bettergui.api.menu.MenuElement;
 import me.hsgamer.bettergui.util.StringReplacerApplier;
+import me.hsgamer.hscore.common.CollectionUtils;
 import me.hsgamer.hscore.common.MapUtils;
 import org.geysermc.cumulus.util.FormImage;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -51,5 +53,10 @@ public class ComponentUtil {
                 return null;
             }
         };
+    }
+
+    public static String toMultilineString(Object input) {
+        List<String> list = CollectionUtils.createStringListFromObject(input);
+        return String.join("\n", list);
     }
 }

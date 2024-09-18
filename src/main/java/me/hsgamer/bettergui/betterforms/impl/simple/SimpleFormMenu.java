@@ -18,8 +18,8 @@ package me.hsgamer.bettergui.betterforms.impl.simple;
 import me.hsgamer.bettergui.betterforms.api.builder.ComponentProviderBuilder;
 import me.hsgamer.bettergui.betterforms.api.menu.FormMenu;
 import me.hsgamer.bettergui.betterforms.api.sender.FormSender;
+import me.hsgamer.bettergui.betterforms.util.ComponentUtil;
 import me.hsgamer.bettergui.util.StringReplacerApplier;
-import me.hsgamer.hscore.common.CollectionUtils;
 import me.hsgamer.hscore.common.MapUtils;
 import me.hsgamer.hscore.config.Config;
 import org.bukkit.entity.Player;
@@ -41,8 +41,7 @@ public class SimpleFormMenu extends FormMenu<SimpleForm, SimpleFormResponse, Sim
         super(sender, config);
 
         content = Optional.ofNullable(MapUtils.getIfFound(menuSettings, "content"))
-                .map(CollectionUtils::createStringListFromObject)
-                .map(list -> String.join("\n", list))
+                .map(ComponentUtil::toMultilineString)
                 .orElse("");
     }
 
