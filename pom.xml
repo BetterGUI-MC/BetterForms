@@ -18,7 +18,7 @@
   <description>Another Bedrock Forms Addon</description>
 
   <properties>
-    <core.version>4.5.4</core.version>
+    <core.version>4.5.7</core.version>
     <project.mainClass>me.hsgamer.bettergui.betterforms.BetterForms</project.mainClass>
     <license.packageName>me.hsgamer.bettergui.betterforms.license</license.packageName>
   </properties>
