@@ -27,22 +27,25 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class StepSliderComponentProvider extends ValueComponentProvider {
+import static java.util.Optional.ofNullable;
+
+public class OptionListComponentProvider extends ValueComponentProvider {
+    private final Type type;
     private final Map<UUID, List<String>> optionsMap = new ConcurrentHashMap<>();
     private final String text;
     private final List<String> options;
     private final String defaultOption;
 
-    public StepSliderComponentProvider(ComponentProviderBuilder.Input input) {
+    public OptionListComponentProvider(Type type, ComponentProviderBuilder.Input input) {
         super(input);
-
-        this.text = Optional.ofNullable(MapUtils.getIfFound(input.options, "text"))
+        this.type = type;
+        this.text = ofNullable(MapUtils.getIfFound(input.options, "text"))
                 .map(Object::toString)
                 .orElse("");
-        this.options = Optional.ofNullable(MapUtils.getIfFound(input.options, "option", "options", "step", "steps"))
+        this.options = ofNullable(MapUtils.getIfFound(input.options, "option", "options"))
                 .map(CollectionUtils::createStringListFromObject)
                 .orElse(Collections.emptyList());
-        this.defaultOption = Optional.ofNullable(MapUtils.getIfFound(input.options, "default-option", "default"))
+        this.defaultOption = ofNullable(MapUtils.getIfFound(input.options, "default-option", "default"))
                 .map(Objects::toString)
                 .orElse("0");
     }
@@ -56,12 +59,33 @@ public class StepSliderComponentProvider extends ValueComponentProvider {
         String replacedDefaultOption = StringReplacerApplier.replace(this.defaultOption, uuid, this);
         int defaultOption = Validate.getNumber(replacedDefaultOption).map(Number::intValue).orElse(0);
 
-        builder.stepSlider(replacedText, replacedOptions, defaultOption);
+        switch (this.type) {
+            case DROPDOWN:
+                builder.dropdown(replacedText, replacedOptions, defaultOption);
+                break;
+            case STEP_SLIDER:
+                builder.stepSlider(replacedText, replacedOptions, defaultOption);
+                break;
+        }
         this.optionsMap.put(uuid, replacedOptions);
     }
 
     @Override
     protected String getValue(UUID uuid, CustomFormResponse response) {
-        return optionsMap.get(uuid).get(response.asStepSlider());
+        int index = 0;
+        switch (this.type) {
+            case DROPDOWN:
+                index = response.asDropdown();
+                break;
+            case STEP_SLIDER:
+                index = response.asStepSlider();
+                break;
+        }
+        return this.optionsMap.get(uuid).get(index);
+    }
+
+    public enum Type {
+        DROPDOWN,
+        STEP_SLIDER
     }
 }

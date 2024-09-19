@@ -30,10 +30,10 @@ public class CustomFormMenu extends FormMenu<CustomForm, CustomFormResponse, Cus
         builder.register(SubmitComponentProvider::new, "submit", "button");
         builder.register(IconComponentProvider::new, "icon", "image");
         builder.register(LabelComponentProvider::new, "label", "text", "content");
-        builder.register(DropdownComponentProvider::new, "dropdown", "select");
+        builder.register(input -> new OptionListComponentProvider(OptionListComponentProvider.Type.DROPDOWN, input), "dropdown", "select");
         builder.register(InputComponentProvider::new, "input");
         builder.register(SliderComponentProvider::new, "slider");
-        builder.register(StepSliderComponentProvider::new, "step-slider", "step");
+        builder.register(input -> new OptionListComponentProvider(OptionListComponentProvider.Type.STEP_SLIDER, input), "step-slider", "step");
         builder.register(ToggleComponentProvider::new, "toggle", "switch");
     }
 
