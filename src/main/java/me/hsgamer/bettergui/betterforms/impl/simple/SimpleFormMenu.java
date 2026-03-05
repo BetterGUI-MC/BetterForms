@@ -24,12 +24,11 @@ import me.hsgamer.hscore.common.MapUtils;
 import me.hsgamer.hscore.config.Config;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.form.SimpleForm;
-import org.geysermc.cumulus.response.SimpleFormResponse;
 
 import java.util.Optional;
 
-public class SimpleFormMenu extends FormMenu<SimpleForm, SimpleFormResponse, SimpleForm.Builder> {
-    private static final ComponentProviderBuilder<SimpleForm, SimpleFormResponse, SimpleForm.Builder> builder = new ComponentProviderBuilder<>();
+public class SimpleFormMenu extends FormMenu {
+    private static final ComponentProviderBuilder builder = new ComponentProviderBuilder();
 
     static {
         builder.register(SimpleButtonComponentProvider::new, "button", "");
@@ -51,7 +50,7 @@ public class SimpleFormMenu extends FormMenu<SimpleForm, SimpleFormResponse, Sim
     }
 
     @Override
-    protected ComponentProviderBuilder<SimpleForm, SimpleFormResponse, SimpleForm.Builder> getComponentProviderBuilder() {
+    protected ComponentProviderBuilder getComponentProviderBuilder() {
         return builder;
     }
 }

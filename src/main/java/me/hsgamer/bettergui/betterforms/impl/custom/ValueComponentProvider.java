@@ -19,7 +19,10 @@ import me.hsgamer.bettergui.betterforms.api.builder.ComponentProviderBuilder;
 import me.hsgamer.bettergui.betterforms.api.component.Component;
 import me.hsgamer.bettergui.betterforms.common.BaseComponentProvider;
 import org.geysermc.cumulus.form.CustomForm;
+import org.geysermc.cumulus.form.Form;
+import org.geysermc.cumulus.form.util.FormBuilder;
 import org.geysermc.cumulus.response.CustomFormResponse;
+import org.geysermc.cumulus.response.FormResponse;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +30,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class ValueComponentProvider extends BaseComponentProvider<CustomForm, CustomFormResponse, CustomForm.Builder> {
+public abstract class ValueComponentProvider extends BaseComponentProvider {
     private final Map<UUID, String> valueMap = new ConcurrentHashMap<>();
 
     protected ValueComponentProvider(ComponentProviderBuilder.Input input) {
@@ -39,21 +42,25 @@ public abstract class ValueComponentProvider extends BaseComponentProvider<Custo
     protected abstract String getValue(UUID uuid, CustomFormResponse response);
 
     @Override
-    protected List<Component<CustomForm, CustomFormResponse, CustomForm.Builder>> provideChecked(UUID uuid, int index) {
-        return Collections.singletonList(new Component<CustomForm, CustomFormResponse, CustomForm.Builder>() {
+    protected List<Component> provideChecked(UUID uuid, int index) {
+        return Collections.singletonList(new Component() {
             @Override
-            public void apply(CustomForm.Builder builder) {
-                ValueComponentProvider.this.apply(uuid, builder);
+            public void apply(FormBuilder<?, ?, ?> builder) {
+                if (builder instanceof CustomForm.Builder) {
+                    ValueComponentProvider.this.apply(uuid, (CustomForm.Builder) builder);
+                }
             }
 
             @Override
-            public void preHandle(CustomForm form, CustomFormResponse response) {
-                valueMap.put(uuid, getValue(uuid, response));
-            }
-
-            @Override
-            public void handle(CustomForm form, CustomFormResponse response) {
+            public void handle(Form form, FormResponse response) {
                 // EMPTY
+            }
+
+            @Override
+            public void preHandle(Form form, FormResponse response) {
+                if (response instanceof CustomFormResponse) {
+                    valueMap.put(uuid, getValue(uuid, (CustomFormResponse) response));
+                }
             }
         });
     }

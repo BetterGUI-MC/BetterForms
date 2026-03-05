@@ -20,7 +20,10 @@ import me.hsgamer.bettergui.betterforms.api.component.Component;
 import me.hsgamer.bettergui.betterforms.common.CommonButtonComponentProvider;
 import me.hsgamer.bettergui.util.StringReplacerApplier;
 import me.hsgamer.hscore.common.MapUtils;
+import org.geysermc.cumulus.form.Form;
 import org.geysermc.cumulus.form.ModalForm;
+import org.geysermc.cumulus.form.util.FormBuilder;
+import org.geysermc.cumulus.response.FormResponse;
 import org.geysermc.cumulus.response.ModalFormResponse;
 
 import java.util.Collections;
@@ -28,7 +31,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class ModalButtonComponentProvider extends CommonButtonComponentProvider<ModalForm, ModalFormResponse, ModalForm.Builder> {
+public class ModalButtonComponentProvider extends CommonButtonComponentProvider {
     private final String value;
 
     public ModalButtonComponentProvider(ComponentProviderBuilder.Input input) {
@@ -39,23 +42,27 @@ public class ModalButtonComponentProvider extends CommonButtonComponentProvider<
     }
 
     @Override
-    protected List<Component<ModalForm, ModalFormResponse, ModalForm.Builder>> provideChecked(UUID uuid, int index) {
+    protected List<Component> provideChecked(UUID uuid, int index) {
         boolean first = index == 0;
-        return Collections.singletonList(new Component<ModalForm, ModalFormResponse, ModalForm.Builder>() {
+        return Collections.singletonList(new Component() {
             @Override
-            public void apply(ModalForm.Builder builder) {
-                String replaced = StringReplacerApplier.replace(value, uuid, ModalButtonComponentProvider.this);
-                if (first) {
-                    builder.button1(replaced);
-                } else {
-                    builder.button2(replaced);
+            public void apply(FormBuilder<?, ?, ?> builder) {
+                if (builder instanceof ModalForm.Builder) {
+                    String replaced = StringReplacerApplier.replace(value, uuid, ModalButtonComponentProvider.this);
+                    if (first) {
+                        ((ModalForm.Builder) builder).button1(replaced);
+                    } else {
+                        ((ModalForm.Builder) builder).button2(replaced);
+                    }
                 }
             }
 
             @Override
-            public void handle(ModalForm form, ModalFormResponse response) {
-                if (first == response.clickedFirst()) {
-                    handleClick(uuid);
+            public void handle(Form form, FormResponse response) {
+                if (response instanceof ModalFormResponse) {
+                    if (first == ((ModalFormResponse) response).clickedFirst()) {
+                        handleClick(uuid);
+                    }
                 }
             }
         });

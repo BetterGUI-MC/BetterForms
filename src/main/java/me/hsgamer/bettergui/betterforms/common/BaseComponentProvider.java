@@ -25,16 +25,13 @@ import me.hsgamer.bettergui.util.ProcessApplierConstants;
 import me.hsgamer.bettergui.util.SchedulerUtil;
 import me.hsgamer.hscore.common.MapUtils;
 import me.hsgamer.hscore.task.BatchRunnable;
-import org.geysermc.cumulus.form.Form;
-import org.geysermc.cumulus.form.util.FormBuilder;
-import org.geysermc.cumulus.response.FormResponse;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public abstract class BaseComponentProvider<F extends Form, R extends FormResponse, B extends FormBuilder<B, F, R>> implements ComponentProvider<F, R, B> {
+public abstract class BaseComponentProvider implements ComponentProvider {
     protected final ComponentProviderBuilder.Input input;
     private final RequirementApplier viewRequirementApplier;
 
@@ -47,10 +44,10 @@ public abstract class BaseComponentProvider<F extends Form, R extends FormRespon
                 .orElse(RequirementApplier.EMPTY);
     }
 
-    protected abstract List<Component<F, R, B>> provideChecked(UUID uuid, int index);
+    protected abstract List<Component> provideChecked(UUID uuid, int index);
 
     @Override
-    public List<Component<F, R, B>> provide(UUID uuid, int index) {
+    public List<Component> provide(UUID uuid, int index) {
         Requirement.Result result = viewRequirementApplier.getResult(uuid);
 
         BatchRunnable batchRunnable = new BatchRunnable();

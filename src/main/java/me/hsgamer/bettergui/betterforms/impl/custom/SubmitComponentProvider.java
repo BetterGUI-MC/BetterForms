@@ -18,28 +18,29 @@ package me.hsgamer.bettergui.betterforms.impl.custom;
 import me.hsgamer.bettergui.betterforms.api.builder.ComponentProviderBuilder;
 import me.hsgamer.bettergui.betterforms.api.component.Component;
 import me.hsgamer.bettergui.betterforms.common.CommonButtonComponentProvider;
-import org.geysermc.cumulus.form.CustomForm;
-import org.geysermc.cumulus.response.CustomFormResponse;
+import org.geysermc.cumulus.form.Form;
+import org.geysermc.cumulus.form.util.FormBuilder;
+import org.geysermc.cumulus.response.FormResponse;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-public class SubmitComponentProvider extends CommonButtonComponentProvider<CustomForm, CustomFormResponse, CustomForm.Builder> {
+public class SubmitComponentProvider extends CommonButtonComponentProvider {
     public SubmitComponentProvider(ComponentProviderBuilder.Input input) {
         super(input);
     }
 
     @Override
-    protected List<Component<CustomForm, CustomFormResponse, CustomForm.Builder>> provideChecked(UUID uuid, int index) {
-        return Collections.singletonList(new Component<CustomForm, CustomFormResponse, CustomForm.Builder>() {
+    protected List<Component> provideChecked(UUID uuid, int index) {
+        return Collections.singletonList(new Component() {
             @Override
-            public void apply(CustomForm.Builder builder) {
+            public void apply(FormBuilder<?, ?, ?> builder) {
                 // EMPTY
             }
 
             @Override
-            public void handle(CustomForm form, CustomFormResponse response) {
+            public void handle(Form form, FormResponse response) {
                 handleClick(uuid);
             }
         });

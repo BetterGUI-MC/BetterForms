@@ -19,14 +19,11 @@ import me.hsgamer.bettergui.api.menu.Menu;
 import me.hsgamer.bettergui.betterforms.api.component.ComponentProvider;
 import me.hsgamer.hscore.builder.FunctionalMassBuilder;
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringMap;
-import org.geysermc.cumulus.form.Form;
-import org.geysermc.cumulus.form.util.FormBuilder;
-import org.geysermc.cumulus.response.FormResponse;
 
 import java.util.Map;
 import java.util.Objects;
 
-public class ComponentProviderBuilder<F extends Form, R extends FormResponse, B extends FormBuilder<B, F, R>> extends FunctionalMassBuilder<ComponentProviderBuilder.Input, ComponentProvider<F, R, B>> {
+public class ComponentProviderBuilder extends FunctionalMassBuilder<ComponentProviderBuilder.Input, ComponentProvider> {
     protected String getDefaultType() {
         return "";
     }

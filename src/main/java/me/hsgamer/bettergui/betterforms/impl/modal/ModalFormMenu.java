@@ -24,12 +24,11 @@ import me.hsgamer.hscore.common.MapUtils;
 import me.hsgamer.hscore.config.Config;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.form.ModalForm;
-import org.geysermc.cumulus.response.ModalFormResponse;
 
 import java.util.Optional;
 
-public class ModalFormMenu extends FormMenu<ModalForm, ModalFormResponse, ModalForm.Builder> {
-    private static final ComponentProviderBuilder<ModalForm, ModalFormResponse, ModalForm.Builder> builder = new ComponentProviderBuilder<>();
+public class ModalFormMenu extends FormMenu {
+    private static final ComponentProviderBuilder builder = new ComponentProviderBuilder();
 
     static {
         builder.register(ModalButtonComponentProvider::new, "button", "");
@@ -51,7 +50,7 @@ public class ModalFormMenu extends FormMenu<ModalForm, ModalFormResponse, ModalF
     }
 
     @Override
-    protected ComponentProviderBuilder<ModalForm, ModalFormResponse, ModalForm.Builder> getComponentProviderBuilder() {
+    protected ComponentProviderBuilder getComponentProviderBuilder() {
         return builder;
     }
 }

@@ -21,10 +21,9 @@ import me.hsgamer.bettergui.betterforms.api.sender.FormSender;
 import me.hsgamer.hscore.config.Config;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.form.CustomForm;
-import org.geysermc.cumulus.response.CustomFormResponse;
 
-public class CustomFormMenu extends FormMenu<CustomForm, CustomFormResponse, CustomForm.Builder> {
-    private static final ComponentProviderBuilder<CustomForm, CustomFormResponse, CustomForm.Builder> builder = new ComponentProviderBuilder<>();
+public class CustomFormMenu extends FormMenu {
+    private static final ComponentProviderBuilder builder = new ComponentProviderBuilder();
 
     static {
         builder.register(SubmitComponentProvider::new, "submit", "button");
@@ -47,7 +46,7 @@ public class CustomFormMenu extends FormMenu<CustomForm, CustomFormResponse, Cus
     }
 
     @Override
-    protected ComponentProviderBuilder<CustomForm, CustomFormResponse, CustomForm.Builder> getComponentProviderBuilder() {
+    protected ComponentProviderBuilder getComponentProviderBuilder() {
         return builder;
     }
 }

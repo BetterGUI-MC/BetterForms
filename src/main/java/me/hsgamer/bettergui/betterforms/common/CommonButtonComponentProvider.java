@@ -23,14 +23,11 @@ import me.hsgamer.bettergui.util.ProcessApplierConstants;
 import me.hsgamer.bettergui.util.SchedulerUtil;
 import me.hsgamer.hscore.common.MapUtils;
 import me.hsgamer.hscore.task.BatchRunnable;
-import org.geysermc.cumulus.form.Form;
-import org.geysermc.cumulus.form.util.FormBuilder;
-import org.geysermc.cumulus.response.FormResponse;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public abstract class CommonButtonComponentProvider<F extends Form, R extends FormResponse, B extends FormBuilder<B, F, R>> extends BaseComponentProvider<F, R, B> {
+public abstract class CommonButtonComponentProvider extends BaseComponentProvider {
     private final ActionApplier actionApplier;
     private final RequirementApplier clickRequirementApplier;
 

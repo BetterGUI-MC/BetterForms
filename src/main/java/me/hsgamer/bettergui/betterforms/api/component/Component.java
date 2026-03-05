@@ -19,16 +19,16 @@ import org.geysermc.cumulus.form.Form;
 import org.geysermc.cumulus.form.util.FormBuilder;
 import org.geysermc.cumulus.response.FormResponse;
 
-public interface Component<F extends Form, R extends FormResponse, B extends FormBuilder<B, F, R>> {
-    void apply(B builder);
+public interface Component {
+    void apply(FormBuilder<?, ?, ?> builder);
 
-    void handle(F form, R response);
+    void handle(Form form, FormResponse response);
 
-    default void postApply(F form) {
+    default void postApply(Form form) {
         // EMPTY
     }
 
-    default void preHandle(F form, R response) {
+    default void preHandle(Form form, FormResponse response) {
         // EMPTY
     }
 }

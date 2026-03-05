@@ -32,17 +32,16 @@ import me.hsgamer.hscore.task.BatchRunnable;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.form.Form;
 import org.geysermc.cumulus.form.util.FormBuilder;
-import org.geysermc.cumulus.response.FormResponse;
 
 import java.util.*;
 import java.util.function.BiConsumer;
 
-public abstract class FormMenu<F extends Form, R extends FormResponse, B extends FormBuilder<B, F, R>> extends BaseMenu {
+public abstract class FormMenu extends BaseMenu {
     private final FormSender sender;
     private final String title;
-    private final List<BiConsumer<UUID, B>> formModifiers = new ArrayList<>();
+    private final List<BiConsumer<UUID, FormBuilder<?, ?, ?>>> formModifiers = new ArrayList<>();
     private final ActionApplier javaActionApplier;
-    private final Map<String, ComponentProvider<F, R, B>> componentMap = new LinkedHashMap<>();
+    private final Map<String, ComponentProvider> componentMap = new LinkedHashMap<>();
 
     protected FormMenu(FormSender sender, Config config) {
         super(config);
@@ -64,7 +63,7 @@ public abstract class FormMenu<F extends Form, R extends FormResponse, B extends
                     });
                 }));
 
-        ComponentProviderBuilder<F, R, B> componentProviderBuilder = getComponentProviderBuilder();
+        ComponentProviderBuilder componentProviderBuilder = getComponentProviderBuilder();
         for (Map.Entry<String, Object> configEntry : configSettings.entrySet()) {
             String key = configEntry.getKey();
             MapUtils.castOptionalStringObjectMap(configEntry.getValue())
@@ -94,9 +93,9 @@ public abstract class FormMenu<F extends Form, R extends FormResponse, B extends
         }));
     }
 
-    protected abstract B createFormBuilder(Player player);
+    protected abstract FormBuilder<?, ?, ?> createFormBuilder(Player player);
 
-    protected abstract ComponentProviderBuilder<F, R, B> getComponentProviderBuilder();
+    protected abstract ComponentProviderBuilder getComponentProviderBuilder();
 
     @Override
     protected boolean createChecked(Player player, String[] args, boolean bypass) {
@@ -110,12 +109,12 @@ public abstract class FormMenu<F extends Form, R extends FormResponse, B extends
             return false;
         }
 
-        B builder = createFormBuilder(player);
+        FormBuilder<?, ?, ?> builder = createFormBuilder(player);
         builder.title(StringReplacerApplier.replace(title, uuid, this));
 
-        List<Component<F, R, B>> components = new ArrayList<>();
-        for (ComponentProvider<F, R, B> provider : componentMap.values()) {
-            List<Component<F, R, B>> newComponents = provider.provide(uuid, components.size());
+        List<Component> components = new ArrayList<>();
+        for (ComponentProvider provider : componentMap.values()) {
+            List<Component> newComponents = provider.provide(uuid, components.size());
             components.addAll(newComponents);
         }
 
@@ -127,7 +126,7 @@ public abstract class FormMenu<F extends Form, R extends FormResponse, B extends
             components.forEach(component -> component.handle(form, response));
         });
 
-        F form = builder.build();
+        Form form = builder.build();
         components.forEach(component -> component.postApply(form));
 
         if (sender.sendForm(uuid, form)) {

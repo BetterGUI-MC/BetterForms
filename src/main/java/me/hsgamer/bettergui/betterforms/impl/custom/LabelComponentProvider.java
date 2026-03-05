@@ -21,14 +21,16 @@ import me.hsgamer.bettergui.betterforms.common.BaseComponentProvider;
 import me.hsgamer.bettergui.util.StringReplacerApplier;
 import me.hsgamer.hscore.common.MapUtils;
 import org.geysermc.cumulus.form.CustomForm;
-import org.geysermc.cumulus.response.CustomFormResponse;
+import org.geysermc.cumulus.form.Form;
+import org.geysermc.cumulus.form.util.FormBuilder;
+import org.geysermc.cumulus.response.FormResponse;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class LabelComponentProvider extends BaseComponentProvider<CustomForm, CustomFormResponse, CustomForm.Builder> {
+public class LabelComponentProvider extends BaseComponentProvider {
     private final String value;
 
     public LabelComponentProvider(ComponentProviderBuilder.Input input) {
@@ -40,15 +42,17 @@ public class LabelComponentProvider extends BaseComponentProvider<CustomForm, Cu
     }
 
     @Override
-    protected List<Component<CustomForm, CustomFormResponse, CustomForm.Builder>> provideChecked(UUID uuid, int index) {
-        return Collections.singletonList(new Component<CustomForm, CustomFormResponse, CustomForm.Builder>() {
+    protected List<Component> provideChecked(UUID uuid, int index) {
+        return Collections.singletonList(new Component() {
             @Override
-            public void apply(CustomForm.Builder builder) {
-                builder.label(StringReplacerApplier.replace(value, uuid, LabelComponentProvider.this));
+            public void apply(FormBuilder<?, ?, ?> builder) {
+                if (builder instanceof CustomForm.Builder) {
+                    ((CustomForm.Builder) builder).label(StringReplacerApplier.replace(value, uuid, LabelComponentProvider.this));
+                }
             }
 
             @Override
-            public void handle(CustomForm form, CustomFormResponse response) {
+            public void handle(Form form, FormResponse response) {
                 // EMPTY
             }
         });

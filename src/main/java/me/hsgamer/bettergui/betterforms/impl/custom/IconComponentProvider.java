@@ -20,7 +20,9 @@ import me.hsgamer.bettergui.betterforms.api.component.Component;
 import me.hsgamer.bettergui.betterforms.common.BaseComponentProvider;
 import me.hsgamer.bettergui.betterforms.util.ComponentUtil;
 import org.geysermc.cumulus.form.CustomForm;
-import org.geysermc.cumulus.response.CustomFormResponse;
+import org.geysermc.cumulus.form.Form;
+import org.geysermc.cumulus.form.util.FormBuilder;
+import org.geysermc.cumulus.response.FormResponse;
 import org.geysermc.cumulus.util.FormImage;
 
 import java.util.Collections;
@@ -28,7 +30,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
-public class IconComponentProvider extends BaseComponentProvider<CustomForm, CustomFormResponse, CustomForm.Builder> {
+public class IconComponentProvider extends BaseComponentProvider {
     private final Function<UUID, FormImage> imageFunction;
 
     public IconComponentProvider(ComponentProviderBuilder.Input input) {
@@ -38,18 +40,20 @@ public class IconComponentProvider extends BaseComponentProvider<CustomForm, Cus
     }
 
     @Override
-    protected List<Component<CustomForm, CustomFormResponse, CustomForm.Builder>> provideChecked(UUID uuid, int index) {
-        return Collections.singletonList(new Component<CustomForm, CustomFormResponse, CustomForm.Builder>() {
+    protected List<Component> provideChecked(UUID uuid, int index) {
+        return Collections.singletonList(new Component() {
             @Override
-            public void apply(CustomForm.Builder builder) {
-                FormImage image = imageFunction.apply(uuid);
-                if (image != null) {
-                    builder.icon(image);
+            public void apply(FormBuilder<?, ?, ?> builder) {
+                if (builder instanceof CustomForm.Builder) {
+                    FormImage image = imageFunction.apply(uuid);
+                    if (image != null) {
+                        ((CustomForm.Builder) builder).icon(image);
+                    }
                 }
             }
 
             @Override
-            public void handle(CustomForm form, CustomFormResponse response) {
+            public void handle(Form form, FormResponse response) {
                 // EMPTY
             }
         });
