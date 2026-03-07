@@ -13,13 +13,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package me.hsgamer.bettergui.betterforms.common;
+package me.hsgamer.bettergui.betterforms.component;
 
 import me.hsgamer.bettergui.api.menu.Menu;
 import me.hsgamer.bettergui.api.requirement.Requirement;
-import me.hsgamer.bettergui.betterforms.api.builder.ComponentProviderBuilder;
-import me.hsgamer.bettergui.betterforms.api.component.Component;
-import me.hsgamer.bettergui.betterforms.api.component.ComponentProvider;
+import me.hsgamer.bettergui.betterforms.builder.ComponentProviderBuilder;
 import me.hsgamer.bettergui.requirement.RequirementApplier;
 import me.hsgamer.bettergui.util.ProcessApplierConstants;
 import me.hsgamer.bettergui.util.SchedulerUtil;

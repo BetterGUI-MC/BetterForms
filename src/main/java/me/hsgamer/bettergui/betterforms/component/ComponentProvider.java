@@ -13,14 +13,17 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package me.hsgamer.bettergui.betterforms.api.sender;
+package me.hsgamer.bettergui.betterforms.component;
 
-import org.geysermc.cumulus.form.Form;
+import me.hsgamer.bettergui.api.menu.MenuElement;
 
+import java.util.List;
 import java.util.UUID;
 
-public interface FormSender {
-    boolean canSendForm(UUID uuid);
+public interface ComponentProvider extends MenuElement {
+    List<Component> provide(UUID uuid, int index);
 
-    boolean sendForm(UUID uuid, Form form);
+    default String getValue(UUID uuid, String args) {
+        return "";
+    }
 }

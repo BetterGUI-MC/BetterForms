@@ -13,22 +13,30 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package me.hsgamer.bettergui.betterforms.impl.custom;
+package me.hsgamer.bettergui.betterforms.component.impl;
 
-import me.hsgamer.bettergui.betterforms.api.builder.ComponentProviderBuilder;
-import me.hsgamer.bettergui.betterforms.api.component.Component;
-import me.hsgamer.bettergui.betterforms.common.CommonButtonComponentProvider;
+import me.hsgamer.bettergui.betterforms.builder.ComponentProviderBuilder;
+import me.hsgamer.bettergui.betterforms.component.BaseComponentProvider;
+import me.hsgamer.bettergui.betterforms.component.Component;
+import me.hsgamer.bettergui.betterforms.util.ComponentUtil;
+import org.geysermc.cumulus.form.CustomForm;
 import org.geysermc.cumulus.form.Form;
 import org.geysermc.cumulus.form.util.FormBuilder;
 import org.geysermc.cumulus.response.FormResponse;
+import org.geysermc.cumulus.util.FormImage;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 
-public class SubmitComponentProvider extends CommonButtonComponentProvider {
-    public SubmitComponentProvider(ComponentProviderBuilder.Input input) {
+public class IconComponentProvider extends BaseComponentProvider {
+    private final Function<UUID, FormImage> imageFunction;
+
+    public IconComponentProvider(ComponentProviderBuilder.Input input) {
         super(input);
+
+        imageFunction = ComponentUtil.createImageFunction(input.options, this);
     }
 
     @Override
@@ -36,12 +44,17 @@ public class SubmitComponentProvider extends CommonButtonComponentProvider {
         return Collections.singletonList(new Component() {
             @Override
             public void apply(FormBuilder<?, ?, ?> builder) {
-                // EMPTY
+                if (builder instanceof CustomForm.Builder) {
+                    FormImage image = imageFunction.apply(uuid);
+                    if (image != null) {
+                        ((CustomForm.Builder) builder).icon(image);
+                    }
+                }
             }
 
             @Override
             public void handle(Form form, FormResponse response) {
-                handleClick(uuid);
+                // EMPTY
             }
         });
     }

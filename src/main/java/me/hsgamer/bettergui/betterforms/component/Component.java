@@ -13,17 +13,22 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package me.hsgamer.bettergui.betterforms.api.component;
+package me.hsgamer.bettergui.betterforms.component;
 
-import me.hsgamer.bettergui.api.menu.MenuElement;
+import org.geysermc.cumulus.form.Form;
+import org.geysermc.cumulus.form.util.FormBuilder;
+import org.geysermc.cumulus.response.FormResponse;
 
-import java.util.List;
-import java.util.UUID;
+public interface Component {
+    void apply(FormBuilder<?, ?, ?> builder);
 
-public interface ComponentProvider extends MenuElement {
-    List<Component> provide(UUID uuid, int index);
+    void handle(Form form, FormResponse response);
 
-    default String getValue(UUID uuid, String args) {
-        return "";
+    default void postApply(Form form) {
+        // EMPTY
+    }
+
+    default void preHandle(Form form, FormResponse response) {
+        // EMPTY
     }
 }

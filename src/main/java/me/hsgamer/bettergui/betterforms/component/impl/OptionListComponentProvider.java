@@ -13,9 +13,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package me.hsgamer.bettergui.betterforms.impl.custom;
+package me.hsgamer.bettergui.betterforms.component.impl;
 
-import me.hsgamer.bettergui.betterforms.api.builder.ComponentProviderBuilder;
+import me.hsgamer.bettergui.betterforms.builder.ComponentProviderBuilder;
 import me.hsgamer.bettergui.util.StringReplacerApplier;
 import me.hsgamer.hscore.common.CollectionUtils;
 import me.hsgamer.hscore.common.MapUtils;

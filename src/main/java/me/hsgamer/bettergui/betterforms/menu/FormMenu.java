@@ -13,13 +13,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package me.hsgamer.bettergui.betterforms.api.menu;
+package me.hsgamer.bettergui.betterforms.menu;
 
 import me.hsgamer.bettergui.action.ActionApplier;
-import me.hsgamer.bettergui.betterforms.api.builder.ComponentProviderBuilder;
-import me.hsgamer.bettergui.betterforms.api.component.Component;
-import me.hsgamer.bettergui.betterforms.api.component.ComponentProvider;
-import me.hsgamer.bettergui.betterforms.api.sender.FormSender;
+import me.hsgamer.bettergui.betterforms.builder.ComponentProviderBuilder;
+import me.hsgamer.bettergui.betterforms.component.Component;
+import me.hsgamer.bettergui.betterforms.component.ComponentProvider;
+import me.hsgamer.bettergui.betterforms.sender.FormSender;
+import me.hsgamer.bettergui.betterforms.util.ComponentUtil;
 import me.hsgamer.bettergui.menu.BaseMenu;
 import me.hsgamer.bettergui.util.ProcessApplierConstants;
 import me.hsgamer.bettergui.util.SchedulerUtil;
@@ -30,22 +31,50 @@ import me.hsgamer.hscore.common.StringReplacer;
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.task.BatchRunnable;
 import org.bukkit.entity.Player;
+import org.geysermc.cumulus.form.CustomForm;
 import org.geysermc.cumulus.form.Form;
+import org.geysermc.cumulus.form.ModalForm;
+import org.geysermc.cumulus.form.SimpleForm;
 import org.geysermc.cumulus.form.util.FormBuilder;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
-public abstract class FormMenu extends BaseMenu {
+public class FormMenu extends BaseMenu {
     private final FormSender sender;
+    private final FormMenu.FormType formType;
+    private final String defaultComponentType;
+    private final Function<Player, FormBuilder<?, ?, ?>> formBuilderFunction;
     private final String title;
     private final List<BiConsumer<UUID, FormBuilder<?, ?, ?>>> formModifiers = new ArrayList<>();
     private final ActionApplier javaActionApplier;
     private final Map<String, ComponentProvider> componentMap = new LinkedHashMap<>();
 
-    protected FormMenu(FormSender sender, Config config) {
+    public FormMenu(FormSender sender, Config config, FormType formType) {
         super(config);
         this.sender = sender;
+        this.formType = formType;
+
+        String content = Optional.ofNullable(MapUtils.getIfFound(menuSettings, "content"))
+                .map(ComponentUtil::toMultilineString)
+                .orElse("");
+        switch (formType) {
+            case SIMPLE:
+                this.defaultComponentType = "button";
+                this.formBuilderFunction = player -> SimpleForm.builder().content(StringReplacerApplier.replace(content, player.getUniqueId(), this));
+                break;
+            case MODAL:
+                this.defaultComponentType = "button";
+                this.formBuilderFunction = player -> ModalForm.builder().content(StringReplacerApplier.replace(content, player.getUniqueId(), this));
+                break;
+            case CUSTOM:
+                this.defaultComponentType = "";
+                this.formBuilderFunction = player -> CustomForm.builder();
+                break;
+            default:
+                throw new IllegalArgumentException("Form type " + formType + " is not supported");
+        }
 
         title = Optional.ofNullable(MapUtils.getIfFound(menuSettings, "title"))
                 .map(Object::toString)
@@ -63,7 +92,7 @@ public abstract class FormMenu extends BaseMenu {
                     });
                 }));
 
-        ComponentProviderBuilder componentProviderBuilder = getComponentProviderBuilder();
+        ComponentProviderBuilder componentProviderBuilder = ComponentProviderBuilder.INSTANCE;
         for (Map.Entry<String, Object> configEntry : configSettings.entrySet()) {
             String key = configEntry.getKey();
             MapUtils.castOptionalStringObjectMap(configEntry.getValue())
@@ -93,10 +122,6 @@ public abstract class FormMenu extends BaseMenu {
         }));
     }
 
-    protected abstract FormBuilder<?, ?, ?> createFormBuilder(Player player);
-
-    protected abstract ComponentProviderBuilder getComponentProviderBuilder();
-
     @Override
     protected boolean createChecked(Player player, String[] args, boolean bypass) {
         UUID uuid = player.getUniqueId();
@@ -109,7 +134,7 @@ public abstract class FormMenu extends BaseMenu {
             return false;
         }
 
-        FormBuilder<?, ?, ?> builder = createFormBuilder(player);
+        FormBuilder<?, ?, ?> builder = this.formBuilderFunction.apply(player);
         builder.title(StringReplacerApplier.replace(title, uuid, this));
 
         List<Component> components = new ArrayList<>();
@@ -154,5 +179,19 @@ public abstract class FormMenu extends BaseMenu {
     @Override
     public void closeAll() {
         // EMPTY
+    }
+
+    public String getDefaultComponentType() {
+        return defaultComponentType;
+    }
+
+    public FormType getFormType() {
+        return formType;
+    }
+
+    public enum FormType {
+        SIMPLE,
+        MODAL,
+        CUSTOM
     }
 }

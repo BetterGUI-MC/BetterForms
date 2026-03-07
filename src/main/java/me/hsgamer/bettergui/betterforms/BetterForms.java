@@ -16,11 +16,9 @@
 package me.hsgamer.bettergui.betterforms;
 
 import me.hsgamer.bettergui.api.addon.GetLogger;
-import me.hsgamer.bettergui.betterforms.api.sender.FormSender;
-import me.hsgamer.bettergui.betterforms.impl.custom.CustomFormMenu;
-import me.hsgamer.bettergui.betterforms.impl.modal.ModalFormMenu;
-import me.hsgamer.bettergui.betterforms.impl.simple.SimpleFormMenu;
+import me.hsgamer.bettergui.betterforms.menu.FormMenu;
 import me.hsgamer.bettergui.betterforms.sender.FloodgateFormSender;
+import me.hsgamer.bettergui.betterforms.sender.FormSender;
 import me.hsgamer.bettergui.betterforms.sender.GeyserFormSender;
 import me.hsgamer.bettergui.builder.MenuBuilder;
 import me.hsgamer.bettergui.util.SchedulerUtil;
@@ -64,9 +62,9 @@ public final class BetterForms implements Expansion, GetLogger {
             throw new IllegalStateException("Neither Geyser nor Floodgate is installed");
         }
 
-        MenuBuilder.INSTANCE.register(config -> new ModalFormMenu(sender, config), "modal-form");
-        MenuBuilder.INSTANCE.register(config -> new SimpleFormMenu(sender, config), "simple-form");
-        MenuBuilder.INSTANCE.register(config -> new CustomFormMenu(sender, config), "custom-form");
+        MenuBuilder.INSTANCE.register(config -> new FormMenu(sender, config, FormMenu.FormType.MODAL), "modal-form");
+        MenuBuilder.INSTANCE.register(config -> new FormMenu(sender, config, FormMenu.FormType.SIMPLE), "simple-form");
+        MenuBuilder.INSTANCE.register(config -> new FormMenu(sender, config, FormMenu.FormType.CUSTOM), "custom-form");
 
         variableBundle.register("forms_accept", StringReplacer.of((original, uuid) -> Boolean.toString(sender.canSendForm(uuid))), true);
     }

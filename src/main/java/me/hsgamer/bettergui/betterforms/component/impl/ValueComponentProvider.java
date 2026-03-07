@@ -13,11 +13,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package me.hsgamer.bettergui.betterforms.impl.custom;
+package me.hsgamer.bettergui.betterforms.component.impl;
 
-import me.hsgamer.bettergui.betterforms.api.builder.ComponentProviderBuilder;
-import me.hsgamer.bettergui.betterforms.api.component.Component;
-import me.hsgamer.bettergui.betterforms.common.BaseComponentProvider;
+import me.hsgamer.bettergui.betterforms.builder.ComponentProviderBuilder;
+import me.hsgamer.bettergui.betterforms.component.BaseComponentProvider;
+import me.hsgamer.bettergui.betterforms.component.Component;
 import org.geysermc.cumulus.form.CustomForm;
 import org.geysermc.cumulus.form.Form;
 import org.geysermc.cumulus.form.util.FormBuilder;

@@ -13,22 +13,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package me.hsgamer.bettergui.betterforms.api.component;
+package me.hsgamer.bettergui.betterforms.sender;
 
 import org.geysermc.cumulus.form.Form;
-import org.geysermc.cumulus.form.util.FormBuilder;
-import org.geysermc.cumulus.response.FormResponse;
 
-public interface Component {
-    void apply(FormBuilder<?, ?, ?> builder);
+import java.util.UUID;
 
-    void handle(Form form, FormResponse response);
+public interface FormSender {
+    boolean canSendForm(UUID uuid);
 
-    default void postApply(Form form) {
-        // EMPTY
-    }
-
-    default void preHandle(Form form, FormResponse response) {
-        // EMPTY
-    }
+    boolean sendForm(UUID uuid, Form form);
 }

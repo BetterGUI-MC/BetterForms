@@ -15,7 +15,6 @@
 */
 package me.hsgamer.bettergui.betterforms.sender;
 
-import me.hsgamer.bettergui.betterforms.api.sender.FormSender;
 import org.geysermc.cumulus.form.Form;
 import org.geysermc.geyser.api.GeyserApi;
 
