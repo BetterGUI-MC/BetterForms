@@ -27,6 +27,8 @@ import java.util.UUID;
 public class ToggleComponent extends ValueComponent {
     private final String text;
     private final String defaultValue;
+    private final String onTrue;
+    private final String onFalse;
 
     public ToggleComponent(ComponentBuilder.Input input) {
         super(input);
@@ -35,6 +37,12 @@ public class ToggleComponent extends ValueComponent {
                 .map(Object::toString)
                 .orElse("");
         this.defaultValue = Optional.ofNullable(MapUtils.getIfFound(input.options, "default"))
+                .map(Object::toString)
+                .orElse("false");
+        this.onTrue = Optional.ofNullable(MapUtils.getIfFound(input.options, "on-true"))
+                .map(Object::toString)
+                .orElse("true");
+        this.onFalse = Optional.ofNullable(MapUtils.getIfFound(input.options, "on-false"))
                 .map(Object::toString)
                 .orElse("false");
     }
@@ -50,5 +58,11 @@ public class ToggleComponent extends ValueComponent {
     @Override
     protected String getValue(UUID uuid, CustomFormResponse response) {
         return Boolean.toString(response.asToggle());
+    }
+
+    @Override
+    public String getValue(UUID uuid, String args) {
+        String text = Boolean.parseBoolean(super.getValue(uuid, args)) ? onTrue : onFalse;
+        return StringReplacerApplier.replace(text, uuid, this);
     }
 }
