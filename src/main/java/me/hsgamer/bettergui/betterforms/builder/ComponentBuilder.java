@@ -37,6 +37,7 @@ public class ComponentBuilder extends FunctionalMassBuilder<ComponentBuilder.Inp
         register(input -> new OptionListComponent(OptionListComponent.Type.STEP_SLIDER, input), "step-slider", "step");
         register(ToggleComponent::new, "toggle", "switch");
         register(ConditionalComponent::new, "conditional", "predicate");
+        register(ListComponent::new, "list");
     }
 
     @Override
