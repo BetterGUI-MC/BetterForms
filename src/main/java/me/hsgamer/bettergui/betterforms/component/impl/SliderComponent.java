@@ -15,7 +15,7 @@
 */
 package me.hsgamer.bettergui.betterforms.component.impl;
 
-import me.hsgamer.bettergui.betterforms.builder.ComponentProviderBuilder;
+import me.hsgamer.bettergui.betterforms.builder.ComponentBuilder;
 import me.hsgamer.bettergui.util.StringReplacerApplier;
 import me.hsgamer.hscore.common.MapUtils;
 import me.hsgamer.hscore.common.Validate;
@@ -25,14 +25,14 @@ import org.geysermc.cumulus.response.CustomFormResponse;
 import java.util.Optional;
 import java.util.UUID;
 
-public class SliderComponentProvider extends ValueComponentProvider {
+public class SliderComponent extends ValueComponent {
     private final String text;
     private final String min;
     private final String max;
     private final String step;
     private final String defaultValue;
 
-    public SliderComponentProvider(ComponentProviderBuilder.Input input) {
+    public SliderComponent(ComponentBuilder.Input input) {
         super(input);
 
         this.text = Optional.ofNullable(MapUtils.getIfFound(input.options, "text"))

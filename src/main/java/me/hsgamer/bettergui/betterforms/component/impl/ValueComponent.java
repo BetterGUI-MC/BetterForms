@@ -15,25 +15,24 @@
 */
 package me.hsgamer.bettergui.betterforms.component.impl;
 
-import me.hsgamer.bettergui.betterforms.builder.ComponentProviderBuilder;
-import me.hsgamer.bettergui.betterforms.component.BaseComponentProvider;
-import me.hsgamer.bettergui.betterforms.component.Component;
+import me.hsgamer.bettergui.betterforms.builder.ComponentBuilder;
+import me.hsgamer.bettergui.betterforms.component.BaseComponent;
+import me.hsgamer.bettergui.betterforms.component.FormResponseHandler;
 import org.geysermc.cumulus.form.CustomForm;
 import org.geysermc.cumulus.form.Form;
 import org.geysermc.cumulus.form.util.FormBuilder;
 import org.geysermc.cumulus.response.CustomFormResponse;
 import org.geysermc.cumulus.response.FormResponse;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class ValueComponentProvider extends BaseComponentProvider {
+public abstract class ValueComponent extends BaseComponent {
     private final Map<UUID, String> valueMap = new ConcurrentHashMap<>();
 
-    protected ValueComponentProvider(ComponentProviderBuilder.Input input) {
+    protected ValueComponent(ComponentBuilder.Input input) {
         super(input);
     }
 
@@ -42,27 +41,24 @@ public abstract class ValueComponentProvider extends BaseComponentProvider {
     protected abstract String getValue(UUID uuid, CustomFormResponse response);
 
     @Override
-    protected List<Component> provideChecked(UUID uuid, int index) {
-        return Collections.singletonList(new Component() {
-            @Override
-            public void apply(FormBuilder<?, ?, ?> builder) {
-                if (builder instanceof CustomForm.Builder) {
-                    ValueComponentProvider.this.apply(uuid, (CustomForm.Builder) builder);
+    public Optional<FormResponseHandler> apply(UUID uuid, int index, FormBuilder<?, ?, ?> builder) {
+        if (builder instanceof CustomForm.Builder) {
+            ValueComponent.this.apply(uuid, (CustomForm.Builder) builder);
+            return Optional.of(new FormResponseHandler() {
+                @Override
+                public void handle(Form form, FormResponse response) {
+                    // EMPTY
                 }
-            }
 
-            @Override
-            public void handle(Form form, FormResponse response) {
-                // EMPTY
-            }
-
-            @Override
-            public void preHandle(Form form, FormResponse response) {
-                if (response instanceof CustomFormResponse) {
-                    valueMap.put(uuid, getValue(uuid, (CustomFormResponse) response));
+                @Override
+                public void preHandle(Form form, FormResponse response) {
+                    if (response instanceof CustomFormResponse) {
+                        valueMap.put(uuid, ValueComponent.this.getValue(uuid, (CustomFormResponse) response));
+                    }
                 }
-            }
-        });
+            });
+        }
+        return Optional.empty();
     }
 
     @Override

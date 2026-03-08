@@ -15,7 +15,7 @@
 */
 package me.hsgamer.bettergui.betterforms.component.impl;
 
-import me.hsgamer.bettergui.betterforms.builder.ComponentProviderBuilder;
+import me.hsgamer.bettergui.betterforms.builder.ComponentBuilder;
 import me.hsgamer.bettergui.util.StringReplacerApplier;
 import me.hsgamer.hscore.common.MapUtils;
 import org.geysermc.cumulus.form.CustomForm;
@@ -24,31 +24,35 @@ import org.geysermc.cumulus.response.CustomFormResponse;
 import java.util.Optional;
 import java.util.UUID;
 
-public class ToggleComponentProvider extends ValueComponentProvider {
+public class InputComponent extends ValueComponent {
     private final String text;
-    private final String defaultValue;
+    private final String placeholder;
+    private final String defaultText;
 
-    public ToggleComponentProvider(ComponentProviderBuilder.Input input) {
+    public InputComponent(ComponentBuilder.Input input) {
         super(input);
 
         this.text = Optional.ofNullable(MapUtils.getIfFound(input.options, "text"))
                 .map(Object::toString)
                 .orElse("");
-        this.defaultValue = Optional.ofNullable(MapUtils.getIfFound(input.options, "default"))
+        this.placeholder = Optional.ofNullable(MapUtils.getIfFound(input.options, "placeholder"))
                 .map(Object::toString)
-                .orElse("false");
+                .orElse("");
+        this.defaultText = Optional.ofNullable(MapUtils.getIfFound(input.options, "default", "default-text"))
+                .map(Object::toString)
+                .orElse("");
     }
 
     @Override
     protected void apply(UUID uuid, CustomForm.Builder builder) {
         String replacedText = StringReplacerApplier.replace(text, uuid, this);
-        String replacedDefaultValue = StringReplacerApplier.replace(defaultValue, uuid, this);
-        boolean defaultValue = Boolean.parseBoolean(replacedDefaultValue);
-        builder.toggle(replacedText, defaultValue);
+        String replacedPlaceholder = StringReplacerApplier.replace(placeholder, uuid, this);
+        String replacedDefaultText = StringReplacerApplier.replace(defaultText, uuid, this);
+        builder.input(replacedText, replacedPlaceholder, replacedDefaultText);
     }
 
     @Override
     protected String getValue(UUID uuid, CustomFormResponse response) {
-        return Boolean.toString(response.asToggle());
+        return response.asInput();
     }
 }

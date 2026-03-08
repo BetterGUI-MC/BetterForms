@@ -15,7 +15,7 @@
 */
 package me.hsgamer.bettergui.betterforms.builder;
 
-import me.hsgamer.bettergui.betterforms.component.ComponentProvider;
+import me.hsgamer.bettergui.betterforms.component.Component;
 import me.hsgamer.bettergui.betterforms.component.impl.*;
 import me.hsgamer.bettergui.betterforms.menu.FormMenu;
 import me.hsgamer.hscore.builder.FunctionalMassBuilder;
@@ -24,18 +24,18 @@ import me.hsgamer.hscore.collections.map.CaseInsensitiveStringMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class ComponentProviderBuilder extends FunctionalMassBuilder<ComponentProviderBuilder.Input, ComponentProvider> {
-    public static final ComponentProviderBuilder INSTANCE = new ComponentProviderBuilder();
+public class ComponentBuilder extends FunctionalMassBuilder<ComponentBuilder.Input, Component> {
+    public static final ComponentBuilder INSTANCE = new ComponentBuilder();
 
-    private ComponentProviderBuilder() {
-        register(ButtonComponentProvider::new, "submit", "button");
-        register(IconComponentProvider::new, "icon", "image");
-        register(LabelComponentProvider::new, "label", "text", "content");
-        register(input -> new OptionListComponentProvider(OptionListComponentProvider.Type.DROPDOWN, input), "dropdown", "select");
-        register(InputComponentProvider::new, "input");
-        register(SliderComponentProvider::new, "slider");
-        register(input -> new OptionListComponentProvider(OptionListComponentProvider.Type.STEP_SLIDER, input), "step-slider", "step");
-        register(ToggleComponentProvider::new, "toggle", "switch");
+    private ComponentBuilder() {
+        register(ButtonComponent::new, "submit", "button");
+        register(IconComponent::new, "icon", "image");
+        register(LabelComponent::new, "label", "text", "content");
+        register(input -> new OptionListComponent(OptionListComponent.Type.DROPDOWN, input), "dropdown", "select");
+        register(InputComponent::new, "input");
+        register(SliderComponent::new, "slider");
+        register(input -> new OptionListComponent(OptionListComponent.Type.STEP_SLIDER, input), "step-slider", "step");
+        register(ToggleComponent::new, "toggle", "switch");
     }
 
     @Override

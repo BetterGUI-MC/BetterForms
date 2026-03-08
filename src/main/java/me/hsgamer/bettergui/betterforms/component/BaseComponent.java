@@ -15,16 +15,18 @@
 */
 package me.hsgamer.bettergui.betterforms.component;
 
-import me.hsgamer.bettergui.api.menu.MenuElement;
-import org.geysermc.cumulus.form.util.FormBuilder;
+import me.hsgamer.bettergui.api.menu.Menu;
+import me.hsgamer.bettergui.betterforms.builder.ComponentBuilder;
 
-import java.util.Optional;
-import java.util.UUID;
+public abstract class BaseComponent implements Component {
+    protected final ComponentBuilder.Input input;
 
-public interface Component extends MenuElement {
-    Optional<FormResponseHandler> apply(UUID uuid, int index, FormBuilder<?, ?, ?> builder);
+    protected BaseComponent(ComponentBuilder.Input input) {
+        this.input = input;
+    }
 
-    default String getValue(UUID uuid, String args) {
-        return "";
+    @Override
+    public Menu getMenu() {
+        return input.menu;
     }
 }

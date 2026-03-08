@@ -15,25 +15,21 @@
 */
 package me.hsgamer.bettergui.betterforms.component.impl;
 
-import me.hsgamer.bettergui.betterforms.builder.ComponentProviderBuilder;
-import me.hsgamer.bettergui.betterforms.component.BaseComponentProvider;
-import me.hsgamer.bettergui.betterforms.component.Component;
+import me.hsgamer.bettergui.betterforms.builder.ComponentBuilder;
+import me.hsgamer.bettergui.betterforms.component.BaseComponent;
+import me.hsgamer.bettergui.betterforms.component.FormResponseHandler;
 import me.hsgamer.bettergui.util.StringReplacerApplier;
 import me.hsgamer.hscore.common.MapUtils;
 import org.geysermc.cumulus.form.CustomForm;
-import org.geysermc.cumulus.form.Form;
 import org.geysermc.cumulus.form.util.FormBuilder;
-import org.geysermc.cumulus.response.FormResponse;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class LabelComponentProvider extends BaseComponentProvider {
+public class LabelComponent extends BaseComponent {
     private final String value;
 
-    public LabelComponentProvider(ComponentProviderBuilder.Input input) {
+    public LabelComponent(ComponentBuilder.Input input) {
         super(input);
 
         value = Optional.ofNullable(MapUtils.getIfFound(input.options, "value", "text", "content", "label"))
@@ -42,19 +38,11 @@ public class LabelComponentProvider extends BaseComponentProvider {
     }
 
     @Override
-    protected List<Component> provideChecked(UUID uuid, int index) {
-        return Collections.singletonList(new Component() {
-            @Override
-            public void apply(FormBuilder<?, ?, ?> builder) {
-                if (builder instanceof CustomForm.Builder) {
-                    ((CustomForm.Builder) builder).label(StringReplacerApplier.replace(value, uuid, LabelComponentProvider.this));
-                }
-            }
-
-            @Override
-            public void handle(Form form, FormResponse response) {
-                // EMPTY
-            }
-        });
+    public Optional<FormResponseHandler> apply(UUID uuid, int index, FormBuilder<?, ?, ?> builder) {
+        if (builder instanceof CustomForm.Builder) {
+            ((CustomForm.Builder) builder).label(StringReplacerApplier.replace(value, uuid, LabelComponent.this));
+            return Optional.of(FormResponseHandler.EMPTY);
+        }
+        return Optional.empty();
     }
 }

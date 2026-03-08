@@ -15,7 +15,7 @@
 */
 package me.hsgamer.bettergui.betterforms.component.impl;
 
-import me.hsgamer.bettergui.betterforms.builder.ComponentProviderBuilder;
+import me.hsgamer.bettergui.betterforms.builder.ComponentBuilder;
 import me.hsgamer.bettergui.util.StringReplacerApplier;
 import me.hsgamer.hscore.common.CollectionUtils;
 import me.hsgamer.hscore.common.MapUtils;
@@ -29,14 +29,14 @@ import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
 
-public class OptionListComponentProvider extends ValueComponentProvider {
+public class OptionListComponent extends ValueComponent {
     private final Type type;
     private final Map<UUID, List<String>> optionsMap = new ConcurrentHashMap<>();
     private final String text;
     private final List<String> options;
     private final String defaultOption;
 
-    public OptionListComponentProvider(Type type, ComponentProviderBuilder.Input input) {
+    public OptionListComponent(Type type, ComponentBuilder.Input input) {
         super(input);
         this.type = type;
         this.text = ofNullable(MapUtils.getIfFound(input.options, "text"))

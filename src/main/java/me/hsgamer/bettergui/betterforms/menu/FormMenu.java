@@ -16,9 +16,10 @@
 package me.hsgamer.bettergui.betterforms.menu;
 
 import me.hsgamer.bettergui.action.ActionApplier;
-import me.hsgamer.bettergui.betterforms.builder.ComponentProviderBuilder;
+import me.hsgamer.bettergui.betterforms.builder.ComponentBuilder;
 import me.hsgamer.bettergui.betterforms.component.Component;
-import me.hsgamer.bettergui.betterforms.component.ComponentProvider;
+import me.hsgamer.bettergui.betterforms.component.FormResponseHandler;
+import me.hsgamer.bettergui.betterforms.component.impl.ConditionalComponent;
 import me.hsgamer.bettergui.betterforms.sender.FormSender;
 import me.hsgamer.bettergui.betterforms.util.ComponentUtil;
 import me.hsgamer.bettergui.menu.BaseMenu;
@@ -49,7 +50,7 @@ public class FormMenu extends BaseMenu {
     private final String title;
     private final List<BiConsumer<UUID, FormBuilder<?, ?, ?>>> formModifiers = new ArrayList<>();
     private final ActionApplier javaActionApplier;
-    private final Map<String, ComponentProvider> componentMap = new LinkedHashMap<>();
+    private final Map<String, Component> componentMap = new LinkedHashMap<>();
 
     public FormMenu(FormSender sender, Config config, FormType formType) {
         super(config);
@@ -92,14 +93,31 @@ public class FormMenu extends BaseMenu {
                     });
                 }));
 
-        ComponentProviderBuilder componentProviderBuilder = ComponentProviderBuilder.INSTANCE;
+        // A small toggle to use the legacy behavior of wrapping all top-level components with ConditionalComponent
+        boolean legacyComponent = Optional.ofNullable(MapUtils.getIfFound(menuSettings, "legacy-component"))
+                .map(Object::toString)
+                .map(Boolean::parseBoolean)
+                .orElse(true);
+
         for (Map.Entry<String, Object> configEntry : configSettings.entrySet()) {
             String key = configEntry.getKey();
-            MapUtils.castOptionalStringObjectMap(configEntry.getValue())
-                    .map(CaseInsensitiveStringMap::new)
-                    .map(map -> new ComponentProviderBuilder.Input(this, key, map))
-                    .flatMap(componentProviderBuilder::build)
-                    .ifPresent(customFormComponent -> componentMap.put(key, customFormComponent));
+            Optional<Map<String, Object>> optionalOptions = MapUtils.castOptionalStringObjectMap(configEntry.getValue())
+                    .map(CaseInsensitiveStringMap::new);
+            if (!optionalOptions.isPresent()) {
+                continue;
+            }
+            Map<String, Object> options = optionalOptions.get();
+            Optional<Component> optionalComponent = ComponentBuilder.INSTANCE.build(new ComponentBuilder.Input(this, key, options));
+            if (!optionalComponent.isPresent()) {
+                continue;
+            }
+            Component component = optionalComponent.get();
+
+            if (legacyComponent && !(component instanceof ConditionalComponent)) {
+                component = new ConditionalComponent(new ComponentBuilder.Input(this, key, options), component, null);
+            }
+
+            componentMap.put(key, component);
         }
 
         if (!closeActionApplier.isEmpty()) {
@@ -137,22 +155,19 @@ public class FormMenu extends BaseMenu {
         FormBuilder<?, ?, ?> builder = this.formBuilderFunction.apply(player);
         builder.title(StringReplacerApplier.replace(title, uuid, this));
 
-        List<Component> components = new ArrayList<>();
-        for (ComponentProvider provider : componentMap.values()) {
-            List<Component> newComponents = provider.provide(uuid, components.size());
-            components.addAll(newComponents);
+        List<FormResponseHandler> responseHandlers = new ArrayList<>();
+        for (Component provider : componentMap.values()) {
+            provider.apply(uuid, responseHandlers.size(), builder).ifPresent(responseHandlers::add);
         }
 
-        components.forEach(component -> component.apply(builder));
         formModifiers.forEach(modifier -> modifier.accept(uuid, builder));
 
         builder.validResultHandler((form, response) -> {
-            components.forEach(component -> component.preHandle(form, response));
-            components.forEach(component -> component.handle(form, response));
+            responseHandlers.forEach(component -> component.preHandle(form, response));
+            responseHandlers.forEach(component -> component.handle(form, response));
         });
 
         Form form = builder.build();
-        components.forEach(component -> component.postApply(form));
 
         if (sender.sendForm(uuid, form)) {
             if (!openActionApplier.isEmpty()) {
