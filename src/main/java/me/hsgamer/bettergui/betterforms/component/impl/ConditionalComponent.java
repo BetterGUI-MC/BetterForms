@@ -17,8 +17,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-public class ConditionalComponent implements Component {
-    private final ComponentBuilder.Input input;
+public class ConditionalComponent extends Component {
     private final Component component;
     private final Component fallbackComponent;
 
@@ -27,7 +26,7 @@ public class ConditionalComponent implements Component {
     private final Set<UUID> whoCannotView = new ConcurrentSkipListSet<>();
 
     public ConditionalComponent(ComponentBuilder.Input input, Component component, Component fallbackComponent) {
-        this.input = input;
+        super(input);
         this.component = component;
         this.fallbackComponent = fallbackComponent;
 

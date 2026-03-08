@@ -16,7 +16,7 @@
 package me.hsgamer.bettergui.betterforms.component.impl;
 
 import me.hsgamer.bettergui.betterforms.builder.ComponentBuilder;
-import me.hsgamer.bettergui.betterforms.component.BaseComponent;
+import me.hsgamer.bettergui.betterforms.component.Component;
 import me.hsgamer.bettergui.betterforms.component.FormResponseHandler;
 import org.geysermc.cumulus.form.CustomForm;
 import org.geysermc.cumulus.form.Form;
@@ -29,7 +29,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class ValueComponent extends BaseComponent {
+public abstract class ValueComponent extends Component {
     private final Map<UUID, String> valueMap = new ConcurrentHashMap<>();
 
     protected ValueComponent(ComponentBuilder.Input input) {

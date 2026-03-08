@@ -16,7 +16,7 @@
 package me.hsgamer.bettergui.betterforms.component.impl;
 
 import me.hsgamer.bettergui.betterforms.builder.ComponentBuilder;
-import me.hsgamer.bettergui.betterforms.component.BaseComponent;
+import me.hsgamer.bettergui.betterforms.component.Component;
 import me.hsgamer.bettergui.betterforms.component.FormResponseHandler;
 import me.hsgamer.bettergui.util.StringReplacerApplier;
 import me.hsgamer.hscore.common.MapUtils;
@@ -26,7 +26,7 @@ import org.geysermc.cumulus.form.util.FormBuilder;
 import java.util.Optional;
 import java.util.UUID;
 
-public class LabelComponent extends BaseComponent {
+public class LabelComponent extends Component {
     private final String value;
 
     public LabelComponent(ComponentBuilder.Input input) {

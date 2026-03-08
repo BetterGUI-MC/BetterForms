@@ -18,7 +18,7 @@ package me.hsgamer.bettergui.betterforms.component.impl;
 import me.hsgamer.bettergui.action.ActionApplier;
 import me.hsgamer.bettergui.api.requirement.Requirement;
 import me.hsgamer.bettergui.betterforms.builder.ComponentBuilder;
-import me.hsgamer.bettergui.betterforms.component.BaseComponent;
+import me.hsgamer.bettergui.betterforms.component.Component;
 import me.hsgamer.bettergui.betterforms.component.FormResponseHandler;
 import me.hsgamer.bettergui.betterforms.util.ComponentUtil;
 import me.hsgamer.bettergui.requirement.RequirementApplier;
@@ -39,7 +39,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 
-public class ButtonComponent extends BaseComponent {
+public class ButtonComponent extends Component {
     private final ActionApplier actionApplier;
     private final RequirementApplier clickRequirementApplier;
     private final String value;
